@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# All initial mail comes in as untagged
+
+# Note mail sent specifically to me
+notmuch tag +to-me -- to:jethrokuan95@gmail.com and not tag:to-me
+notmuch tag +to-me -- to:jethro@nushackers.org and not tag:to-me
+notmuch tag +to-me -- to:e0036913@u.nus.edu and not tag:to-me
+notmuch tag +to-me -- to:jethro@comp.nus.edu.sg and not tag:to-me
+notmuch tag +to-me -- to:\*@jethrokuan.com and not tag:to-me
+
+# Note mail sent from me
+notmuch tag +sent -- from:jethrokuan95@gmail.com and not tag:sent
+notmuch tag +sent -- from:jethro@nushackers.org and not tag:sent
+notmuch tag +sent -- from:e0036913@u.nus.edu and not tag:sent
+notmuch tag +sent -- from:jethro@comp.nus.edu.sg and not tag:sent
+notmuch tag +sent -- from:\*@jethrokuan.com and not tag:sent
+
+# Note mail from personal inbox
+notmuch tag +personal -- to:jethrokuan95@gmail.com and not tag:personal
+notmuch tag +personal -- to:hi@jethrokuan.com and not tag:personal
+
+# Note mail to NUS hackers
+notmuch tag +nushackers -- to:\*@nushackers.org and not tag:nushackers
+
+# Note mail to NUS
+notmuch tag +nus -- to:\*@u.nus.edu  and not tag:nus
+notmuch tag +nus -- to:\*@comp.nus.edu.sg and not tag:nus
+notmuch tag -inbox +draft -- folder:~/.mail/drafts/

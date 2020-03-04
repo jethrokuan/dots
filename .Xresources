@@ -1,0 +1,98 @@
+! ~/.Xresource
+*.foreground:   #cbe3e7
+*.background:   #1e1c31
+*.cursorColor:  #fbfcfc
+
+! black
+*.color0:       #565575
+*.color8:       #100e23
+
+! red
+*.color1:       #ff8080
+*.color9:       #ff5458
+
+! green
+*.color2:       #95ffa4
+*.color10:      #62d196
+
+! yellow
+*.color3:       #ffe9aa
+*.color11:      #ffb378
+
+! blue
+*.color4:       #91ddff
+*.color12:      #65b2ff
+
+! magenta
+*.color5:       #c991e1
+*.color13:      #906cff
+
+! cyan
+*.color6:       #aaffe4
+*.color14:      #63f2f1
+
+! white
+*.color7:       #cbe3e7
+*.color15:      #a6b3cc
+
+Xft.antialias:		1
+Xft.autohint:		0
+Xft.lcdfilter: lcddefault
+Xft.hintstlye: hintfull
+Xft.dpi:		90
+
+URxvt*termName:		rxvt-unicode-256color
+URxvt*scrollTtyOutput: false
+URxvt*scrollTtyKeypress: true
+URxvt*scrollWithBuffer: true
+URxvt*saveLines: 3000
+
+URxvt*loginShell: true
+Urxvt*secondaryScroll:  true
+URxvt*secondaryWheel: true
+URxvt*cursorUnderline: false
+URxvt*font: xft:DejaVu Sans Mono:size=12:autohint=true
+!URxvt.transparent: false
+URxvt*borderless: true
+!URxvt.shading: 35
+URxvt*depth: 32
+
+URxvt*urgentOnBell:	true
+URxvt*scrollBar_right:	true
+URxvt*scrollstyle:	plain
+
+! urxvt
+
+!-*- Perl extensions -*-
+! clipboard
+! update clipboard whenever primary gets updated
+
+! font-size
+URxvt.keysym.C-Up:     perl:font-size:increase
+URxvt.keysym.C-Down:   perl:font-size:decrease
+URxvt.font-size.step:  2
+! disable default binding for shift on urxvt
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+URxvt.perl-ext-common: default,selection-to-clipboard,pasta,matcher,keyboard-select
+URxvt.keysym.M-u:     perl:url-select:select_next
+URxvt.underlineURLs:  True
+URxvt.matcher.button: 1 
+URxvt.keysym.M-Escape:perl:keyboard-select:activate
+URxvt.keysym.Control-Shift-V:     perl:pasta:paste
+URxvt.clipboard.autocopy: true
+
+
+XTerm*faceName:		xft:DejaVu Sans Mono:size=16:antialias=true
+XTerm*termName:		xterm-256color
+XTerm*utf8:		1
+Xterm*borderWidth:	0
+XTerm*toolBar:		off
+XTerm*VT100.translations: #override \n\
+  Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
+  Ctrl Shift <Key>V: insert-selection(CLIPBOARD) \n\
+  Ctrl <Key>M: maximize() \n\
+  Ctrl <Key>R: restore()
+
+Xcursor.size: 32
+Xcursor.theme: Numix-Cursor-Light

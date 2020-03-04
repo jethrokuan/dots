@@ -1,0 +1,18 @@
+[database]
+path=/home/jethro/.mail/
+
+[user]
+name=Jethro Kuan
+primary_email=jethrokuan95@gmail.com
+other_email=jethro@nushackers.org;e0036913@u.nus.edu
+
+[new]
+tags=unread;
+ignore=
+
+[search]
+exclude_tags=deleted;spam;
+
+
+[maildir]
+synchronize_flags=true

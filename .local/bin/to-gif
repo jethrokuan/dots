@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+ffmpeg -i $1 -vf "fps=20,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 $2
