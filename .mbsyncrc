@@ -1,0 +1,72 @@
+# Gmail
+IMAPAccount gmail
+Host imap.gmail.com
+User jethrokuan95@gmail.com
+PassCmd "pass mbsync/jethrokuan95@gmail.com"
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore gmail-remote
+Account gmail
+
+MaildirStore gmail-local
+Path ~/.mail/gmail/
+Inbox ~/.mail/gmail/Inbox
+SubFolders Legacy
+
+Channel gmail
+Master :gmail-remote:
+Slave :gmail-local:
+Patterns "[Gmail]/Sent Mail" "[Gmail]/All Mail"
+Create Both
+SyncState *
+Sync All
+
+# NUS Hackers
+IMAPAccount nushackers
+Host imap.gmail.com
+User jethro@nushackers.org
+PassCmd "pass mbsync/jethro@nushackers.org"
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore nushackers-remote
+Account nushackers
+
+MaildirStore nushackers-local
+Path ~/.mail/nushackers/
+Inbox ~/.mail/nushackers/Inbox
+SubFolders Legacy
+
+Channel nushackers
+Master :nushackers-remote:
+Slave :nushackers-local:
+Patterns "[Gmail]/Sent Mail" "[Gmail]/All Mail"
+Create Both
+SyncState *
+Sync All
+
+# NUS
+IMAPAccount nus
+Host outlook.office365.com
+User e0036913@u.nus.edu
+PassCmd "pass nus/e0036913"
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore nus-remote
+Account nus
+
+MaildirStore nus-local
+Path ~/.mail/nus/
+Inbox ~/.mail/nus/Inbox
+SubFolders Legacy
+
+Channel nus
+Master :nus-remote:
+Slave :nus-local:
+Patterns "INBOX"
+Create Both
+SyncState *
+Sync All
+
