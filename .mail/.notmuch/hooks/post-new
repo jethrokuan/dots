@@ -23,7 +23,15 @@ notmuch tag +personal -- to:hi@jethrokuan.com and not tag:personal
 # Note mail to NUS hackers
 notmuch tag +nushackers -- to:\*@nushackers.org and not tag:nushackers
 
+# delete all messages from Github CI
+notmuch tag +deleted -new -- tag:new and from:notifications@github.com
+
+# mail about Org-roam
+notmuch tag +roam -- org-roam and not tag:roam
+
 # Note mail to NUS
 notmuch tag +nus -- to:\*@u.nus.edu  and not tag:nus
 notmuch tag +nus -- to:\*@comp.nus.edu.sg and not tag:nus
 notmuch tag -inbox +draft -- folder:~/.mail/drafts/
+
+notmuch tag +inbox +unread -new -- tag:new
