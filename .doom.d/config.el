@@ -240,6 +240,13 @@
   (with-eval-after-load 'flycheck
     (flycheck-add-mode 'proselint 'org-mode)))
 
+(use-package! ol-notmuch
+  :init
+  (map! :map notmuch-show-mode-map "C" #'jethro/org-capture-email)
+  (defun jethro/org-capture-email ()
+    (interactive)
+    (org-capture nil "e")))
+
 (after! org
   (defun jethro/org-archive-done-tasks ()
     "Archive all done tasks."
