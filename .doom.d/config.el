@@ -48,14 +48,9 @@
       isearch-allow-scroll 'unlimited)
 
 ;;; notmuch
-(defun +notmuch/toggle-read ()
-    "toggle read status of message"
-    (interactive)
-    (if (member "unread" (notmuch-search-get-tags))
-        (notmuch-search-tag (list "-unread"))
-      (notmuch-search-tag (list "+unread"))))
-
-(after! notmuch
+(use-package! notmuch
+  :commands (notmuch)
+  :init
   (map! :desc "notmuch" "<f2>" #'notmuch)
   (map! :map notmuch-search-mode-map
         :desc "toggle read" "t" #'+notmuch/toggle-read
@@ -86,7 +81,13 @@
                                  (:name "personal" :query "tag:inbox and tag:personal")
                                  (:name "nushackers" :query "tag:inbox and tag:nushackers")
                                  (:name "nus" :query "tag:inbox and tag:nus")
-                                 (:name "drafts" :query "tag:draft"))))
+                                 (:name "drafts" :query "tag:draft")))
+  (defun +notmuch/toggle-read ()
+    "toggle read status of message"
+    (interactive)
+    (if (member "unread" (notmuch-search-get-tags))
+        (notmuch-search-tag (list "-unread"))
+      (notmuch-search-tag (list "+unread")))))
 
 (after! dired
   (setq dired-listing-switches "-aBhl  --group-directories-first"
