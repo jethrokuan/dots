@@ -1,4 +1,5 @@
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.emacs.d/bin:$PATH"
 
 alias p2x1="pdfnup --nup 2x1 --landscape --suffix '2x1' --batch "
 
