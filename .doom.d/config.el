@@ -19,8 +19,9 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font "Iosevka-14"
-      doom-variable-pitch-font "Libre Baskerville-14")
+(setq doom-font (font-spec :family "Iosevka" :size 16)
+      doom-variable-pitch-font (font-spec :family "Libre Baskerville")
+      doom-serif-font (font-spec :family "Libre Baskerville"))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -395,43 +396,39 @@
               ("e" . org-clock-convenience-fill-gap-both)))
 
 (use-package! org-agenda
-  :bind
-  ("<f1>" . #'jethro/switch-to-agenda)
   :init
+  (map! "<f1>" #'jethro/switch-to-agenda)
   (setq org-agenda-block-separator nil
         org-agenda-start-with-log-mode t)
-  (setq jethro/org-agenda-todo-view
-      `(" " "Agenda"
-        ((agenda ""
-                 ((org-agenda-span 'day)
-                  (org-deadline-warning-days 365)))
-         (todo "TODO"
-               ((org-agenda-overriding-header "To Refile")
-                (org-agenda-files '(,(concat jethro/org-agenda-directory "inbox.org")))))
-         (todo "TODO"
-               ((org-agenda-overriding-header "Emails")
-                (org-agenda-files '(,(concat jethro/org-agenda-directory "emails.org")))))
-         (todo "NEXT"
-               ((org-agenda-overriding-header "In Progress")
-                (org-agenda-files '(,(concat jethro/org-agenda-directory "someday.org")
-                                    ,(concat jethro/org-agenda-directory "projects.org")
-                                    ,(concat jethro/org-agenda-directory "next.org")))
-                ))
-         (todo "TODO"
-               ((org-agenda-overriding-header "Projects")
-                (org-agenda-files '(,(concat jethro/org-agenda-directory "projects.org")))
-                ))
-         (todo "TODO"
-               ((org-agenda-overriding-header "One-off Tasks")
-                (org-agenda-files '(,(concat jethro/org-agenda-directory "next.org")))
-                (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
-         nil)))
-  (setq org-columns-default-format "%40ITEM(Task) %Effort(EE){:} %CLOCKSUM(Time Spent) %SCHEDULED(Scheduled) %DEADLINE(Deadline)")
   (defun jethro/switch-to-agenda ()
     (interactive)
     (org-agenda nil " "))
   :config
-  (add-to-list 'org-agenda-custom-commands `,jethro/org-agenda-todo-view))
+  (setq org-columns-default-format "%40ITEM(Task) %Effort(EE){:} %CLOCKSUM(Time Spent) %SCHEDULED(Scheduled) %DEADLINE(Deadline)")
+  (setq org-agenda-custom-commands `((" " "Agenda"
+                                      ((agenda ""
+                                               ((org-agenda-span 'day)
+                                                (org-deadline-warning-days 365)))
+                                       (todo "TODO"
+                                             ((org-agenda-overriding-header "To Refile")
+                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "inbox.org")))))
+                                       (todo "TODO"
+                                             ((org-agenda-overriding-header "Emails")
+                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "emails.org")))))
+                                       (todo "NEXT"
+                                             ((org-agenda-overriding-header "In Progress")
+                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "someday.org")
+                                                                  ,(concat jethro/org-agenda-directory "projects.org")
+                                                                  ,(concat jethro/org-agenda-directory "next.org")))
+                                              ))
+                                       (todo "TODO"
+                                             ((org-agenda-overriding-header "Projects")
+                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "projects.org")))
+                                              ))
+                                       (todo "TODO"
+                                             ((org-agenda-overriding-header "One-off Tasks")
+                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "next.org")))
+                                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled)))))))))
 
 (use-package! org-roam
   :commands (org-roam-insert org-roam-find-file org-roam-switch-to-buffer org-roam)
