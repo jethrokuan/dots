@@ -54,6 +54,8 @@
 (package! deadgrep)
 (package! easy-kill)
 (package! org-clock-convenience)
+(package! org-roam
+  :recipe (:host github :repo "jethrokuan/org-roam"))
 (package! org-journal)
 (package! org-ref-ox-hugo
   :recipe (:host github :repo "jethrokuan/org-ref-ox-hugo" :branch "custom/overrides"))

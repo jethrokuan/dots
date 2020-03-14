@@ -179,7 +179,4 @@
 
        :config
        ;;literate
-       (default +bindings +smartparens)
-
-       :org
-       org-roam)
+       (default +bindings +smartparens))

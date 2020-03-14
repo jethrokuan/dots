@@ -33,7 +33,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type t)
 
 ;;; I-search
 (setq search-highlight t
@@ -60,6 +60,13 @@
         :desc "Next link" "<tab>" #'org-next-link
         :desc "Previous link" "<backtab>" #'org-previous-link
         :desc "URL at point" "C-<return>" #'browse-url-at-point)
+  (defun +notmuch/toggle-read ()
+    "toggle read status of message"
+    (interactive)
+    (if (member "unread" (notmuch-search-get-tags))
+        (notmuch-search-tag (list "-unread"))
+      (notmuch-search-tag (list "+unread"))))
+  :config
   (setq message-auto-save-directory "~/.mail/drafts/"
         message-send-mail-function 'message-send-mail-with-sendmail
         sendmail-program (executable-find "msmtp")
@@ -81,13 +88,7 @@
                                  (:name "personal" :query "tag:inbox and tag:personal")
                                  (:name "nushackers" :query "tag:inbox and tag:nushackers")
                                  (:name "nus" :query "tag:inbox and tag:nus")
-                                 (:name "drafts" :query "tag:draft")))
-  (defun +notmuch/toggle-read ()
-    "toggle read status of message"
-    (interactive)
-    (if (member "unread" (notmuch-search-get-tags))
-        (notmuch-search-tag (list "-unread"))
-      (notmuch-search-tag (list "+unread")))))
+                                 (:name "drafts" :query "tag:draft"))))
 
 (after! dired
   (setq dired-listing-switches "-aBhl  --group-directories-first"
@@ -127,7 +128,7 @@
    ^Move^       ^Keep^               ^Diff^                 ^Other^
    ^^-----------^^-------------------^^---------------------^^-------
    _n_ext       _b_ase               _<_: upper/base        _C_ombine
-   _p_rev       _u_pper              _=_: upper/lower       _r_esolve
+   _p_rev       _u_pper           g   _=_: upper/lower       _r_esolve
    ^^           _l_ower              _>_: base/lower        _k_ill current
    ^^           _a_ll                _R_efine
    ^^           _RET_: current       _E_diff
@@ -199,16 +200,13 @@
 
 (use-package! org
   :mode ("\\.org\\'" . org-mode)
-  :bind
-  (("C-c l" . org-store-link)
-   ("C-c a" . org-agenda)
-   ("C-c b" . org-iswitchb)
-   ("C-c c" . org-capture))
-  :bind
-  (:map org-mode-map
-        ("M-n" . outline-next-visible-heading)
-        ("M-p" . outline-previous-visible-heading))
   :init
+  (map! :leader
+        :prefix "n"
+        "c" #'org-capture)
+  (map! :map org-mode-map
+        "M-n" #'outline-next-visible-heading
+        "M-p" #'outline-previous-visible-heading)
   (setq org-src-window-setup 'current-window
         org-return-follows-link t
         org-babel-load-languages '((emacs-lisp . t)
@@ -260,23 +258,19 @@
 (require 'org-protocol)
 (require 'org-capture)
 
-(add-to-list 'org-capture-templates
-             `("i" "inbox" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
-               "* TODO %?"))
-(add-to-list 'org-capture-templates
-             `("e" "email" entry (file+headline ,(concat jethro/org-agenda-directory "emails.org") "Emails")
+(setq org-capture-templates
+        `(("i" "inbox" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
+           "* TODO %?")
+          ("e" "email" entry (file+headline ,(concat jethro/org-agenda-directory "emails.org") "Emails")
                "* TODO [#A] Reply: %a :@home:@school:"
-               :immediate-finish t))
-(add-to-list 'org-capture-templates
-             `("c" "org-protocol-capture" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
+               :immediate-finish t)
+          ("c" "org-protocol-capture" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
                "* TODO [[%:link][%:description]]\n\n %i"
-               :immediate-finish t))
-(add-to-list 'org-capture-templates
-             `("w" "Weekly Review" entry (file+olp+datetree ,(concat jethro/org-agenda-directory "reviews.org"))
-               (file ,(concat jethro/org-agenda-directory "templates/weekly_review.org"))))
-(add-to-list 'org-agenda-custom-commands
-             `("r" "Reading" todo ""
-               ((org-agenda-files '(,(concat jethro/org-agenda-directory "reading.org"))))))
+               :immediate-finish t)
+          ("w" "Weekly Review" entry (file+olp+datetree ,(concat jethro/org-agenda-directory "reviews.org"))
+           (file ,(concat jethro/org-agenda-directory "templates/weekly_review.org")))
+          ("r" "Reading" todo ""
+               ((org-agenda-files '(,(concat jethro/org-agenda-directory "reading.org")))))))
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -400,10 +394,13 @@
               ("o" . org-clock-convenience-fill-gap)
               ("e" . org-clock-convenience-fill-gap-both)))
 
-(setq org-agenda-block-separator nil
-      org-agenda-start-with-log-mode t)
-
-(setq jethro/org-agenda-todo-view
+(use-package! org-agenda
+  :bind
+  ("<f1>" . #'jethro/switch-to-agenda)
+  :init
+  (setq org-agenda-block-separator nil
+        org-agenda-start-with-log-mode t)
+  (setq jethro/org-agenda-todo-view
       `(" " "Agenda"
         ((agenda ""
                  ((org-agenda-span 'day)
@@ -429,18 +426,14 @@
                 (org-agenda-files '(,(concat jethro/org-agenda-directory "next.org")))
                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
          nil)))
+  (setq org-columns-default-format "%40ITEM(Task) %Effort(EE){:} %CLOCKSUM(Time Spent) %SCHEDULED(Scheduled) %DEADLINE(Deadline)")
+  (defun jethro/switch-to-agenda ()
+    (interactive)
+    (org-agenda nil " "))
+  :config
+  (add-to-list 'org-agenda-custom-commands `,jethro/org-agenda-todo-view))
 
-(add-to-list 'org-agenda-custom-commands `,jethro/org-agenda-todo-view)
-
-(defun jethro/switch-to-agenda ()
-  (interactive)
-  (org-agenda nil " "))
-
-(map! "<f1>" #'jethro/switch-to-agenda)
-
-(setq org-columns-default-format "%40ITEM(Task) %Effort(EE){:} %CLOCKSUM(Time Spent) %SCHEDULED(Scheduled) %DEADLINE(Deadline)")
-
-(use-package org-roam
+(use-package! org-roam
   :commands (org-roam-insert org-roam-find-file org-roam-switch-to-buffer org-roam)
   :hook
   (after-init . org-roam-mode)
@@ -500,9 +493,9 @@
                                (file-relative-name (car it) org-roam-directory)
                                (org-roam--get-title-or-slug (car it))))
            "" (org-roam-sql [:select [file-from]
-                                     :from file-links
-                                     :where (= file-to $s1)
-                                     :and file-from :not :like $s2] file "%private%"))
+                             :from file-links
+                             :where (= file-to $s1)
+                             :and file-from :not :like $s2] file "%private%"))
         ""))
     (defun my/org-export-preprocessor (_backend)
       (let ((links (my/org-roam--backlinks-list (buffer-file-name))))
@@ -529,14 +522,10 @@
 
 (use-package! org-download
   :after org
-  :bind
-  (:map org-mode-map
-        (("s-Y" . org-download-screenshot)
-         ("s-y" . org-download-yank)))
-  :config
-  (if (memq window-system '(mac ns))
-      (setq org-download-screenshot-method "screencapture -i %s")
-    (setq org-download-screenshot-method "maim -s %s"))
+  :init
+  (map! :map org-mode-map
+        "s-Y" #'org-download-screenshot
+        "s-y" #'org-download-yank)
   (defun my-org-download-method (link)
     "This is a helper function for org-download.
 It creates a folder in the root directory (~/.org/img/) named after the
@@ -559,6 +548,10 @@ Inspired by https://github.com/daviderestivo/emacs-config/blob/6086a7013020e19c0
       (unless (file-exists-p dirname)
         (make-directory dirname))
       (expand-file-name filename-with-timestamp dirname)))
+  :config
+  (if (memq window-system '(mac ns))
+      (setq org-download-screenshot-method "screencapture -i %s")
+    (setq org-download-screenshot-method "maim -s %s"))
   (setq org-download-method 'my-org-download-method))
 
 (use-package! org-ref-ox-hugo
@@ -584,17 +577,16 @@ Inspired by https://github.com/daviderestivo/emacs-config/blob/6086a7013020e19c0
   (setq org-gcal-client-id (password-store-get "gmail/org-gcal-client")
         org-gcal-client-secret (password-store-get "gmail/org-gcal")
         org-gcal-fetch-file-alist '(("jethrokuan95@gmail.com" . "~/.org/gtd/calendars/personal.org")
-                                    ("dckbhpq9bq13m03llerl09slgo@group.calendar.google.com" . "~/.org/gtd/calendars/lab.org")))
+                                    ("dckbhpq9bq13m03llerl09slgo@group.calendar.google.com" . "~/.org/gtd/calendars/lab.org"))))
 
 (use-package! mathpix.el
-  :after password-store
-  :straight (:host github :repo "jethrokuan/mathpix.el")
+  :commands (mathpix-screenshot)
+  :init
+  (map! "C-x m" #'mathpix-screenshot)
   :config
   (setq mathpix-screenshot-method "maim -s %s"
         mathpix-app-id (password-store-get "mathpix/app-id")
-        mathpix-app-key (password-store-get "mathpix/app-key"))
-  :bind
-  ("C-x m" . mathpix-screenshot))
+        mathpix-app-key (password-store-get "mathpix/app-key")))
 
 (use-package! slack
   :commands (slack-start)
