@@ -34,7 +34,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
+(setq display-line-numbers-type nil)
 
 ;;; I-search
 (setq search-highlight t
@@ -67,6 +67,10 @@
     (if (member "unread" (notmuch-search-get-tags))
         (notmuch-search-tag (list "-unread"))
       (notmuch-search-tag (list "+unread"))))
+  ;; Turn off auto-fill on message mode
+  (add-hook 'message-mode-hook (lambda ()
+                                 (auto-fill-mode -1)))
+  (add-hook 'message-mode-hook #'+word-wrap-mode)
   :config
   (setq message-auto-save-directory "~/.mail/drafts/"
         message-send-mail-function 'message-send-mail-with-sendmail
@@ -230,12 +234,8 @@
                                        ("v" . "verse")
                                        ("el" . "src emacs-lisp")
                                        ("d" . "definition")
-                                       ("t" . "theorem"))
-        org-startup-indented nil
-        org-hide-leading-stars nil
-        org-hide-emphasis-markers nil
-        org-pretty-entities nil
-        org-adapt-indentation nil)
+                                       ("t" . "theorem")))
+
   (with-eval-after-load 'flycheck
     (flycheck-add-mode 'proselint 'org-mode)))
 
@@ -443,7 +443,9 @@
                   'org-document-info-keyword))
      (set-face-attribute face nil :inherit 'fixed-pitch)))
 
-(remove-hook 'after-change-major-mode-hook #'+org-style-h)
+(add-hook 'org-mode-hook #'writeroom-mode)
+(add-hook 'writeroom-mode-hook #'+word-wrap-mode)
+(add-hook 'writeroom-mode-hook #'+org-pretty-mode)
 
 (use-package! org-roam
   :commands (org-roam-insert org-roam-find-file org-roam-switch-to-buffer org-roam)
