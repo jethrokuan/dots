@@ -190,18 +190,11 @@
         "C-M-p" #'sp-backward-down-sexp
         "C-M-n" #'sp-up-sexp
         "C-M-s" #'sp-splice-sexp
-        "C-M-<up>" #'sp-splice-sexp-killing-backward
-        "C-M-<down>" #'sp-splice-sexp-killing-forward
-        "C-M-r" #'sp-splice-sexp-killing-around
         "C-)" #'sp-forward-slurp-sexp
-        "C-<right>" #'sp-forward-slurp-sexp
         "C-}" #'sp-forward-barf-sexp
-        "C-<left>" #'sp-forward-barf-sexp
         "C-(" #'sp-backward-slurp-sexp
-        "C-M-<left>" #'sp-backward-slurp-sexp
-        "C-{" #'sp-backward-barf-sexp
-        "C-M-<right>" #'sp-backward-barf-sexp
-        "M-S" #'sp-split-sexp))
+        "C-M-)" #'sp-backward-slurp-sexp
+        "C-M-)" #'sp-backward-barf-sexp))
 
 (use-package! org
   :mode ("\\.org\\'" . org-mode)
@@ -484,7 +477,8 @@
            :unnarrowed t))))
 
 (after! (company org-roam)
-  (company-org-roam-init))
+  (set-company-backend! 'org-mode
+    '(company-org-roam :with company-dabbrev :with company-yasnippet)))
 
 (after! (org org-roam)
     (defun my/org-roam--backlinks-list (file)
@@ -624,3 +618,8 @@
   ("<f12>" . gif-screencast-start-or-stop))
 
 (remove-hook 'text-mode-hook #'auto-fill-mode)
+
+(defun insert-date ()
+  "Insert a timestamp according to locale's date and time format."
+  (interactive)
+  (insert (format-time-string "%c" (current-time))))
