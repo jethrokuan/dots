@@ -623,3 +623,9 @@
   "Insert a timestamp according to locale's date and time format."
   (interactive)
   (insert (format-time-string "%c" (current-time))))
+
+(use-package! elfeed-org
+  :init
+  (setq rmh-elfeed-org-files '("/home/jethro/Dropbox/org/braindump/org/feeds.org"))
+  :config
+  (elfeed-org))
