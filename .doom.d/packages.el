@@ -54,6 +54,7 @@
 (package! deadgrep)
 (package! easy-kill)
 (package! org-clock-convenience)
+(package! company-posframe)
 (package! org-roam
   :recipe (:host github :repo "jethrokuan/org-roam"))
 (package! org-journal)

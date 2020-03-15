@@ -430,19 +430,6 @@
                                               (org-agenda-files '(,(concat jethro/org-agenda-directory "next.org")))
                                               (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled)))))))))
 
-(defun +org-style-h ()
-  (setq line-spacing 0.2)
-  (variable-pitch-mode +1)
-  (dolist (face (list 'org-code
-                  'org-block
-                  'org-table
-                  'org-verbatim
-                  'org-block-begin-line
-                  'org-block-end-line
-                  'org-meta-line
-                  'org-document-info-keyword))
-     (set-face-attribute face nil :inherit 'fixed-pitch)))
-
 (add-hook 'org-mode-hook #'writeroom-mode)
 (add-hook 'writeroom-mode-hook #'+word-wrap-mode)
 (add-hook 'writeroom-mode-hook #'+org-pretty-mode)
@@ -635,3 +622,5 @@
 (use-package! gif-screencast
   :bind
   ("<f12>" . gif-screencast-start-or-stop))
+
+(remove-hook 'text-mode-hook #'auto-fill-mode)
