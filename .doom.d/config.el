@@ -407,7 +407,7 @@
   (setq org-columns-default-format "%40ITEM(Task) %Effort(EE){:} %CLOCKSUM(Time Spent) %SCHEDULED(Scheduled) %DEADLINE(Deadline)")
   (setq org-agenda-custom-commands `((" " "Agenda"
                                       ((agenda ""
-                                               ((org-agenda-span 'day)
+                                               ((org-agenda-span 'week)
                                                 (org-deadline-warning-days 365)))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "To Refile")
@@ -429,6 +429,21 @@
                                              ((org-agenda-overriding-header "One-off Tasks")
                                               (org-agenda-files '(,(concat jethro/org-agenda-directory "next.org")))
                                               (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled)))))))))
+
+(defun +org-style-h ()
+  (setq line-spacing 0.2)
+  (variable-pitch-mode +1)
+  (dolist (face (list 'org-code
+                  'org-block
+                  'org-table
+                  'org-verbatim
+                  'org-block-begin-line
+                  'org-block-end-line
+                  'org-meta-line
+                  'org-document-info-keyword))
+     (set-face-attribute face nil :inherit 'fixed-pitch)))
+
+(remove-hook 'after-change-major-mode-hook #'+org-style-h)
 
 (use-package! org-roam
   :commands (org-roam-insert org-roam-find-file org-roam-switch-to-buffer org-roam)
@@ -518,34 +533,41 @@
     (org-journal-new-entry t)))
 
 (use-package! org-download
-  :after org
+  :commands
+  org-download-dnd
+  org-download-yank
+  org-download-screenshot
+  org-download-dnd-base64
   :init
   (map! :map org-mode-map
         "s-Y" #'org-download-screenshot
         "s-y" #'org-download-yank)
-  (defun my-org-download-method (link)
-    "This is a helper function for org-download.
-It creates a folder in the root directory (~/.org/img/) named after the
-org filename (sans extension) and puts all images from that file in there.
-Inspired by https://github.com/daviderestivo/emacs-config/blob/6086a7013020e19c0bc532770e9533b4fc549438/init.el#L701"
+  (pushnew! dnd-protocol-alist
+            '("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . +org-dragndrop-download-dnd-fn)
+            '("^data:" . org-download-dnd-base64))
+  (advice-add #'org-download-enable :override #'ignore)
+  :config
+  (defun +org/org-download-method (link)
     (let ((filename
            (file-name-nondirectory
             (car (url-path-and-query
                   (url-generic-parse-url link)))))
           ;; Create folder name with current buffer name, and place in root dir
           (dirname (concat "./images/"
-                           (replace-regexp-in-string " " "_" (downcase (file-name-base buffer-file-name))))))
-      (make-directory dirname t)
-      ;; Add timestamp to filename
-      (setq filename-with-timestamp (format "%s%s.%s"
+                           (replace-regexp-in-string " " "_"
+                                                     (downcase (file-name-base buffer-file-name)))))
+          (filename-with-timestamp (format "%s%s.%s"
                                             (file-name-sans-extension filename)
                                             (format-time-string org-download-timestamp)
-                                            (file-name-extension filename)))
-      ;; Create folder if necessary
-      (unless (file-exists-p dirname)
-        (make-directory dirname))
+                                            (file-name-extension filename))))
+      (make-directory dirname t)
       (expand-file-name filename-with-timestamp dirname)))
   :config
+  (setq org-download-screenshot-method
+        (cond (IS-MAC "screencapture -i %s")
+              (IS-LINUX
+               (cond ((executable-find "maim")  "maim -s %s")
+                     ((executable-find "scrot") "scrot -s %s")))))
   (if (memq window-system '(mac ns))
       (setq org-download-screenshot-method "screencapture -i %s")
     (setq org-download-screenshot-method "maim -s %s"))
