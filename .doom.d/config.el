@@ -67,10 +67,6 @@
     (if (member "unread" (notmuch-search-get-tags))
         (notmuch-search-tag (list "-unread"))
       (notmuch-search-tag (list "+unread"))))
-  ;; Turn off auto-fill on message mode
-  (add-hook 'message-mode-hook (lambda ()
-                                 (auto-fill-mode -1)))
-  (add-hook 'message-mode-hook #'+word-wrap-mode)
   :config
   (setq message-auto-save-directory "~/.mail/drafts/"
         message-send-mail-function 'message-send-mail-with-sendmail
@@ -618,6 +614,7 @@
   ("<f12>" . gif-screencast-start-or-stop))
 
 (remove-hook 'text-mode-hook #'auto-fill-mode)
+(add-hook 'text-mode-hook #'+word-wrap-mode)
 
 (defun insert-date ()
   "Insert a timestamp according to locale's date and time format."
