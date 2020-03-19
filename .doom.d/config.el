@@ -428,7 +428,7 @@
   :hook
   (after-init . org-roam-mode)
   :custom-face
-  (org-roam-link ((t (:inherit org-link :foreground "#C991E1"))))
+  (org-roam-link ((t (:inherit org-link :foreground "#005200"))))
   :init
   (map! :leader
         :prefix "n"
