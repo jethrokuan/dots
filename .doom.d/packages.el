@@ -67,3 +67,5 @@
 (package! anki-editor)
 (package! gif-screencast
   :recipe (:host gitlab :repo "ambrevar/emacs-gif-screencast"))
+(package! modus-operandi-theme)
+(package! outshine)
