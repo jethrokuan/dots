@@ -438,11 +438,6 @@
         :desc "org-roam-find-file" "f" #'org-roam-find-file
         :desc "org-roam-show-graph" "g" #'org-roam-show-graph
         :desc "org-roam-insert" "i" #'org-roam-insert)
-  (defun jethro/conditional-hugo-enable ()
-    (save-excursion
-      (if (cdr (assoc "SETUPFILE" (org-roam--extract-global-props '("SETUPFILE"))))
-          (org-hugo-auto-export-mode +1)
-        (org-hugo-auto-export-mode -1))))
   (setq org-roam-directory "/home/jethro/Dropbox/org/braindump/org/")
   :config
   (require 'org-roam-protocol)
@@ -472,9 +467,11 @@
 - source :: ${ref}"
            :unnarrowed t))))
 
-(after! (company org-roam)
-  (set-company-backend! 'org-mode
-    '(company-org-roam :with company-dabbrev :with company-yasnippet)))
+(use-package company-org-roam
+  :when (featurep! :completion company)
+  :after org-roam
+  :config
+  (set-company-backend! 'org-mode '(company-org-roam company-yasnippet company-dabbrev)))
 
 (after! (org org-roam)
     (defun my/org-roam--backlinks-list (file)
@@ -495,6 +492,14 @@
             (goto-char (point-max))
             (insert (concat "\n* Backlinks\n" links))))))
     (add-hook 'org-export-before-processing-hook 'my/org-export-preprocessor))
+
+(after! (org ox-hugo)
+  (defun jethro/conditional-hugo-enable ()
+    (save-excursion
+      (if (cdr (assoc "SETUPFILE" (org-roam--extract-global-props '("SETUPFILE"))))
+          (org-hugo-auto-export-mode +1)
+        (org-hugo-auto-export-mode -1))))
+  (add-hook 'org-mode-hook #'jethro/conditional-hugo-enable))
 
 (use-package! org-journal
   :bind

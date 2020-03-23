@@ -69,3 +69,5 @@
   :recipe (:host gitlab :repo "ambrevar/emacs-gif-screencast"))
 (package! modus-operandi-theme)
 (package! outshine)
+(package! company-org-roam
+  :recipe (:host github :repo "jethrokuan/company-org-roam"))
