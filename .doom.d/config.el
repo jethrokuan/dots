@@ -438,7 +438,8 @@
         :desc "org-roam-find-file" "f" #'org-roam-find-file
         :desc "org-roam-show-graph" "g" #'org-roam-show-graph
         :desc "org-roam-insert" "i" #'org-roam-insert)
-  (setq org-roam-directory "/home/jethro/Dropbox/org/braindump/org/")
+  (setq org-roam-directory "/home/jethro/Dropbox/org/braindump/org/"
+        org-roam-db-location "/home/jethro/org-roam.db")
   :config
   (require 'org-roam-protocol)
   (setq org-roam-capture-templates
@@ -505,13 +506,12 @@
   :bind
   ("C-c n j" . org-journal-new-entry)
   ("C-c n t" . org-journal-today)
-  :custom
-  (org-journal-date-prefix "#+TITLE: ")
-  (org-journal-file-format "private-%Y-%m-%d.org")
-  (org-journal-dir "/home/jethro/Dropbox/org/braindump/org/")
-  (org-journal-carryover-items nil)
-  (org-journal-date-format "%Y-%m-%d")
   :config
+  (setq org-journal-date-prefix "#+TITLE: "
+        org-journal-file-format "private-%Y-%m-%d.org"
+        org-journal-dir "/home/jethro/Dropbox/org/braindump/org/"
+        org-journal-carryover-items nil
+        org-journal-date-format "%Y-%m-%d")
   (defun org-journal-today ()
     (interactive)
     (org-journal-new-entry t)))
