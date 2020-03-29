@@ -451,13 +451,13 @@
 #+HUGO_SLUG: ${slug}
 #+TITLE: ${title}\n"
            :unnarrowed t)
-          ("p" "private" plain (function org-roam--capture-get-point)
+          ("p" "private" plain (function org-roam-capture--get-point)
            "%?"
            :file-name "private-${slug}"
            :head "#+TITLE: ${title}\n"
            :unnarrowed t)))
   (setq org-roam-ref-capture-templates
-        '(("r" "ref" plain (function org-roam--capture-get-point)
+        '(("r" "ref" plain (function org-roam-capture--get-point)
            "%?"
            :file-name "websites/${slug}"
            :head "#+SETUPFILE:./hugo_setup.org
