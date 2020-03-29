@@ -71,3 +71,4 @@
 (package! outshine)
 (package! company-org-roam
   :recipe (:host github :repo "jethrokuan/company-org-roam"))
+(package! emr)

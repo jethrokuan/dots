@@ -634,3 +634,7 @@
 
 (use-package! outshine
   :commands (outshine-mode))
+
+(use-package! emr
+  :bind (:map prog-mode-map
+          (("M-RET" . emr-show-refactor-menu))))
