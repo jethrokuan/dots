@@ -437,9 +437,11 @@
         :desc "org-roam-switch-to-buffer" "b" #'org-roam-switch-to-buffer
         :desc "org-roam-find-file" "f" #'org-roam-find-file
         :desc "org-roam-show-graph" "g" #'org-roam-show-graph
-        :desc "org-roam-insert" "i" #'org-roam-insert)
+        :desc "org-roam-insert" "i" #'org-roam-insert
+        :desc "org-roam-capture" "c" #'org-roam-capture)
   (setq org-roam-directory "/home/jethro/Dropbox/org/braindump/org/"
-        org-roam-db-location "/home/jethro/org-roam.db")
+        org-roam-db-location "/home/jethro/org-roam.db"
+        org-roam-graph-exclude-matcher "private")
   :config
   (require 'org-roam-protocol)
   (setq org-roam-capture-templates
