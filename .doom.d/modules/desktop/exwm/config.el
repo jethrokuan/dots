@@ -25,7 +25,6 @@
 (push ?\s-  exwm-input-prefix-keys)
 (push ?\M-  exwm-input-prefix-keys)
 
-(display-battery-mode 1)
 (display-time-mode 1)
 
 (defun jethro/launch (command)

@@ -36,6 +36,9 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type nil)
 
+;; Default encoding to UTF-8
+(set-language-environment "UTF-8")
+
 ;;; I-search
 (setq search-highlight t
       search-whitespace-regexp ".*?"
@@ -644,3 +647,10 @@
 (after! ivy-mode
   (map! :map ivy-minibuffer-map
         "S-SPC" nil))
+
+(use-package! spell-fu
+  :commands (spell-fu-mode)
+  :init
+  (add-hook 'text-mode-hook #'spell-fu-mode))
+;; HOTFIX
+(require 'org-journal)
