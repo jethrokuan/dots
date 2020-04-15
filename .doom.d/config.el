@@ -483,10 +483,10 @@
            (concat acc (format "- [[file:%s][%s]]\n"
                                (file-relative-name (car it) org-roam-directory)
                                (org-roam--get-title-or-slug (car it))))
-           "" (org-roam-sql [:select [from]
-                             :from links
-                             :where (= to $s1)
-                             :and from :not :like $s2] file "%private%"))
+           "" (org-roam-db-query [:select [from]
+                                  :from links
+                                  :where (= to $s1)
+                                  :and from :not :like $s2] file "%private%"))
         ""))
     (defun my/org-export-preprocessor (_backend)
       (let ((links (my/org-roam--backlinks-list (buffer-file-name))))
