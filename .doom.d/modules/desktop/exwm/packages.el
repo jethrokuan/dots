@@ -2,4 +2,3 @@
 ;;; desktop/exwm/packages.el
 
 (package! exwm)
-(package! exwm-edit)

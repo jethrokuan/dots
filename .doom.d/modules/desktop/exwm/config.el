@@ -164,6 +164,4 @@
   (call-process "bash" nil 0 nil "-c" "/home/jethro/.screenlayout/desktop.sh")
   (exwm-randr-enable))
 
-(use-package! exwm-edit)
-
 (exwm-enable)

@@ -74,3 +74,4 @@
 (package! emr)
 (package! spell-fu
   :recipe (:host gitlab :repo "ideasman42/emacs-spell-fu"))
+(package! org-download)
