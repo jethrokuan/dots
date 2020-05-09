@@ -57,6 +57,8 @@
 (package! company-posframe)
 (package! org-roam
   :recipe (:host github :repo "jethrokuan/org-roam"))
+(package! org-roam-bibtex
+  :recipe (:host github :repo "zaeph/org-roam-bibtex"))
 (package! org-journal)
 (package! org-ref-ox-hugo
   :recipe (:host github :repo "jethrokuan/org-ref-ox-hugo" :branch "custom/overrides"))
@@ -75,3 +77,5 @@
 (package! spell-fu
   :recipe (:host gitlab :repo "ideasman42/emacs-spell-fu"))
 (package! org-download)
+(package! ox-texinfo+
+  :recipe (:host github :repo "tarsius/ox-texinfo-plus"))

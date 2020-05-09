@@ -575,15 +575,6 @@
                  ("misc" . "${author} (${year}). *${title}*. Retrieved from [${howpublished}](${howpublished}). ${note}.")
                  (nil . "${author}, *${title}* (${year})."))))
 
-(use-package! org-gcal
-  :after org password-store
-  :commands (org-gcal-fetch)
-  :config
-  (setq org-gcal-client-id (password-store-get "gmail/org-gcal-client")
-        org-gcal-client-secret (password-store-get "gmail/org-gcal")
-        org-gcal-fetch-file-alist '(("jethrokuan95@gmail.com" . "~/.org/gtd/calendars/personal.org")
-                                    ("dckbhpq9bq13m03llerl09slgo@group.calendar.google.com" . "~/.org/gtd/calendars/lab.org"))))
-
 (use-package! mathpix.el
   :commands (mathpix-screenshot)
   :init
@@ -620,19 +611,10 @@
   :bind
   ("<f12>" . gif-screencast-start-or-stop))
 
-(remove-hook 'text-mode-hook #'auto-fill-mode)
-(add-hook 'text-mode-hook #'+word-wrap-mode)
-
 (defun insert-date ()
   "Insert a timestamp according to locale's date and time format."
   (interactive)
   (insert (format-time-string "%c" (current-time))))
-
-(use-package! elfeed-org
-  :init
-  (setq rmh-elfeed-org-files '("/home/jethro/Dropbox/org/braindump/org/feeds.org"))
-  :config
-  (elfeed-org))
 
 (use-package! outshine
   :commands (outshine-mode))
@@ -649,5 +631,6 @@
   :commands (spell-fu-mode)
   :init
   (add-hook 'text-mode-hook #'spell-fu-mode))
+
 ;; HOTFIX
 (require 'org-journal)

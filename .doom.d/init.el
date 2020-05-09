@@ -40,7 +40,7 @@
        nav-flash         ; blink the current line after jumping
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
-       (popup +defaults)   ; tame sudden yet inevitable temporary windows
+       (popup +all +defaults)   ; tame sudden yet inevitable temporary windows
        ;; pretty-code      ; replace bits of code with pretty symbols
        ;;tabs              ; an tab bar for Emacs
        ;;treemacs          ; a project drawer, like neotree but cooler
@@ -78,21 +78,21 @@
        vterm             ; another terminals in Emacs
 
        :checkers
-       syntax              ; tasing you for every semicolon you forget
+       (syntax +childframe) ; tasing you for every semicolon you forget
        ;; spell           ; tasing you for misspelling mispelling
        ;; grammar         ; tasing grammar mistake every you make
 
        :tools
        ;;ansible
-       debugger          ; FIXME stepping through code, to help you add bugs
+       (debugger +lsp)          ; FIXME stepping through code, to help you add bugs
        direnv
        ;;docker
        editorconfig      ; let someone else argue about tabs vs spaces
        ;;ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
-       (lookup +docsets)   ; navigate your code and its documentation
-       lsp
+       (lookup +docsets +dictionary)   ; navigate your code and its documentation
+       (lsp +peek)
        ;;macos             ; MacOS-specific commands
        magit             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
@@ -141,6 +141,7 @@
        ;;ocaml             ; an objective camel
        (org              ; organize your plain life in plain text
         ;; +dragndrop       ; drag & drop files/images into org buffers
+        +noter
         +hugo            ; use Emacs for hugo blogging
         ;;+jupyter        ; ipython/jupyter support for babel
         ;;+pandoc          ; export-with-pandoc support
@@ -173,7 +174,7 @@
        :app
        ;;calendar
        ;;irc               ; how neckbeards socialize
-       (rss +org)        ; emacs as an RSS reader
+       ;; (rss +org)       ; emacs as an RSS reader
        ;; twitter           ; twitter client https://twitter.com/vnought
 
        :config
