@@ -79,3 +79,5 @@
 (package! org-download)
 (package! ox-texinfo+
   :recipe (:host github :repo "tarsius/ox-texinfo-plus"))
+(package! nov
+  :recipe (:type git :repo "https://depp.brause.cc/nov.el.git"))

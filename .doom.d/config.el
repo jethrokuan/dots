@@ -635,8 +635,57 @@
 (require 'org-journal)
 
 (add-hook 'org-mode-hook 'writeroom-mode)
-;; (after! mixed-pitch
-;;   (dolist (f (-filter (lambda (sym)
-;;                         (s-prefix? "company-" (symbol-name sym)))
-;;                       (face-list)))
-;;     (pushnew! mixed-pitch-fixed-pitch-faces f)))
+(after! mixed-pitch
+  (dolist (f (-filter (lambda (sym)
+                        (s-prefix? "company-" (symbol-name sym)))
+                      (face-list)))
+    (pushnew! mixed-pitch-fixed-pitch-faces f)))
+
+(use-package! org-roam-bibtex
+  :after (org-roam)
+  :hook (org-roam-mode . org-roam-bibtex-mode)
+  :config
+  (setq org-roam-bibtex-preformat-keywords
+   '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
+  (setq orb-templates
+        `(("r" "ref" plain (function org-roam-capture--get-point)
+           ""
+           :file-name "${slug}"
+           :head ,(concat
+                   "#+TITLE: ${=key=}: ${title}\n"
+                   "#+ROAM_KEY: ${ref}\n\n"
+                   "* ${title}\n"
+                   "  :PROPERTIES:\n"
+                   "  :Custom_ID: ${=key=}\n"
+                   "  :URL: ${url}\n"
+                   "  :AUTHOR: ${author-or-editor}\n"
+                   "  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+                   "  :NOTER_PAGE: \n"
+                   "  :END:\n")
+           :unnarrowed t))))
+
+(use-package! bibtex-completion
+  :config
+  (setq bibtex-completion-notes-path "~/Dropbox/org/braindump/org/"
+        bibtex-completion-bibliography "~/Dropbox/org/braindump/org/biblio.bib"
+        bibtex-completion-pdf-field "file"
+        bibtex-completion-notes-template-multiple-files
+         (concat
+          "#+TITLE: ${title}\n"
+          "#+ROAM_KEY: cite:${=key=}\n"
+          "* TODO Notes\n"
+          ":PROPERTIES:\n"
+          ":Custom_ID: ${=key=}\n"
+          ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+          ":AUTHOR: ${author-abbrev}\n"
+          ":JOURNAL: ${journaltitle}\n"
+          ":DATE: ${date}\n"
+          ":YEAR: ${year}\n"
+          ":DOI: ${doi}\n"
+          ":URL: ${url}\n"
+          ":END:\n\n"
+          )))
+
+(use-package! nov
+  :hook (nov-mode . variable-pitch-mode)
+  :mode ("\\.\\(epub\\|mobi\\)\\'" . nov-mode))
