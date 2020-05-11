@@ -419,10 +419,6 @@
                                               (org-agenda-files '(,(concat jethro/org-agenda-directory "next.org")))
                                               (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled)))))))))
 
-(add-hook 'org-mode-hook #'writeroom-mode)
-(add-hook 'writeroom-mode-hook #'+word-wrap-mode)
-(add-hook 'writeroom-mode-hook #'+org-pretty-mode)
-
 (use-package! org-roam
   :commands (org-roam-insert org-roam-find-file org-roam-switch-to-buffer org-roam)
   :hook
@@ -469,6 +465,9 @@
 
 - source :: ${ref}"
            :unnarrowed t))))
+
+(use-package! company-posframe
+  :hook (company-mode . company-posframe-mode))
 
 (use-package company-org-roam
   :when (featurep! :completion company)
@@ -634,3 +633,10 @@
 
 ;; HOTFIX
 (require 'org-journal)
+
+(add-hook 'org-mode-hook 'writeroom-mode)
+;; (after! mixed-pitch
+;;   (dolist (f (-filter (lambda (sym)
+;;                         (s-prefix? "company-" (symbol-name sym)))
+;;                       (face-list)))
+;;     (pushnew! mixed-pitch-fixed-pitch-faces f)))
