@@ -436,7 +436,6 @@
         org-roam-db-location "/home/jethro/org-roam.db"
         org-roam-graph-exclude-matcher "private")
   :config
-  (require 'org-roam-protocol)
   (setq org-roam-capture-templates
         '(("d" "default" plain (function org-roam--capture-get-point)
            "%?"
@@ -462,6 +461,9 @@
 
 - source :: ${ref}"
            :unnarrowed t))))
+
+(use-package! org-roam-protocol
+  :after org-protocol)
 
 (use-package! company-posframe
   :hook (company-mode . company-posframe-mode))
