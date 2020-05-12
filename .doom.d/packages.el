@@ -71,7 +71,6 @@
 (package! outshine)
 (package! company-org-roam
   :recipe (:host github :repo "jethrokuan/company-org-roam"))
-(package! emr)
 (package! spell-fu
   :recipe (:host gitlab :repo "ideasman42/emacs-spell-fu"))
 (package! org-download)

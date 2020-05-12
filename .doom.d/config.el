@@ -597,10 +597,6 @@
 (use-package! outshine
   :commands (outshine-mode))
 
-(use-package! emr
-  :bind (:map prog-mode-map
-          (("M-RET" . emr-show-refactor-menu))))
-
 (after! ivy-mode
   (map! :map ivy-minibuffer-map
         "S-SPC" nil))
