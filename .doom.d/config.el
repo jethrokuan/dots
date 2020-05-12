@@ -582,26 +582,6 @@
         mathpix-app-id (password-store-get "mathpix/app-id")
         mathpix-app-key (password-store-get "mathpix/app-key")))
 
-(use-package! slack
-  :commands (slack-start)
-  :bind (:map slack-mode-map
-              (("@" . slack-message-embed-mention)
-               ("#" . slack-message-embed-channel)))
-  :custom
-  (slack-buffer-emojify t)
-  (slack-prefer-current-team t)
-  :config
-  (slack-register-team
-   :name "crslab"
-   :token (password-store-get "slack-tokens/crslab")
-   :full-and-display-names t)
-  (slack-register-team
-   :name "orgroam"
-   :default t
-   :token (password-store-get "slack-tokens/orgroam")
-   :subscribe '("general")
-   :full-and-display-names t))
-
 (use-package! anki-editor
   :commands (anki-editor-mode))
 

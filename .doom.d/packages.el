@@ -64,7 +64,6 @@
   :recipe (:host github :repo "jethrokuan/org-ref-ox-hugo" :branch "custom/overrides"))
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
-(package! slack)
 (package! anki-editor)
 (package! gif-screencast
   :recipe (:host gitlab :repo "ambrevar/emacs-gif-screencast"))
