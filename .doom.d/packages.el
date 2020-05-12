@@ -56,13 +56,12 @@
 (package! org-clock-convenience)
 (package! company-posframe)
 (package! org-roam
-  :recipe (:host github :repo "jethrokuan/org-roam"))
+  :recipe (:host github :repo "org-roam/org-roam"))
 (package! org-roam-bibtex
-  :recipe (:host github :repo "zaeph/org-roam-bibtex"))
+  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! org-journal)
 (package! org-ref-ox-hugo
   :recipe (:host github :repo "jethrokuan/org-ref-ox-hugo" :branch "custom/overrides"))
-(package! org-gcal)
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 (package! slack)

@@ -245,9 +245,6 @@
   (setq org-agenda-files
         (find-lisp-find-files jethro/org-agenda-directory "\.org$")))
 
-(require 'org-protocol)
-(require 'org-capture)
-
 (setq org-capture-templates
         `(("i" "inbox" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
            "* TODO %?")
@@ -689,3 +686,6 @@
 (use-package! nov
   :hook (nov-mode . variable-pitch-mode)
   :mode ("\\.\\(epub\\|mobi\\)\\'" . nov-mode))
+
+(after! org-noter
+  org-noter-doc-split-fraction '(0.57 0.43))
