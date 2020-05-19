@@ -78,3 +78,4 @@
   :recipe (:host github :repo "tarsius/ox-texinfo-plus"))
 (package! nov
   :recipe (:type git :repo "https://depp.brause.cc/nov.el.git"))
+(package! git-link)
