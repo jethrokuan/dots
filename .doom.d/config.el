@@ -667,3 +667,6 @@
 
 (after! org-noter
   org-noter-doc-split-fraction '(0.57 0.43))
+
+(use-package! yaml-mode
+  :mode ("\\.yml\\'" . yaml-mode))
