@@ -84,9 +84,11 @@
         notmuch-search-oldest-first nil
         notmuch-archive-tags '("-inbox" "-unread")
         notmuch-message-headers '("To" "Cc" "Subject" "Bcc")
-        notmuch-saved-searches '((:name "unread" :query "tag:inbox and tag:unread")
-                                 (:name "org-roam" :query "tag:inbox and tag:roam")
+        notmuch-saved-searches '((:name "inbox" :query "tag:inbox")
+                                 (:name "unread" :query "tag:inbox and tag:unread")
+                                 (:name "to-me" :query "tag:inbox and tag:to-me")
                                  (:name "personal" :query "tag:inbox and tag:personal")
+                                 (:name "org-roam" :query "tag:inbox and tag:roam")
                                  (:name "nushackers" :query "tag:inbox and tag:nushackers")
                                  (:name "nus" :query "tag:inbox and tag:nus")
                                  (:name "drafts" :query "tag:draft"))))
