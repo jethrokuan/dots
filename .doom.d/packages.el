@@ -82,3 +82,4 @@
 (package! yaml-mode)
 (package! org-roam-server
   :recipe (:host github :repo "org-roam/org-roam-server"))
+(package! forge)
