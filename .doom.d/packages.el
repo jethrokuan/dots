@@ -80,3 +80,5 @@
   :recipe (:type git :repo "https://depp.brause.cc/nov.el.git"))
 (package! git-link)
 (package! yaml-mode)
+(package! org-roam-server
+  :recipe (:host github :repo "org-roam/org-roam-server"))

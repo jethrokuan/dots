@@ -434,7 +434,8 @@
         :desc "org-roam-capture" "c" #'org-roam-capture)
   (setq org-roam-directory "/home/jethro/Dropbox/org/braindump/org/"
         org-roam-db-location "/home/jethro/org-roam.db"
-        org-roam-graph-exclude-matcher "private")
+        org-roam-graph-exclude-matcher "private"
+        org-roam-tag-sources '(prop last-directory))
   :config
   (setq org-roam-capture-templates
         '(("d" "default" plain (function org-roam--capture-get-point)
@@ -670,3 +671,5 @@
 
 (use-package! yaml-mode
   :mode ("\\.yml\\'" . yaml-mode))
+
+(use-package! org-roam-server)
