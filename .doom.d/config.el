@@ -484,18 +484,18 @@
            (concat acc (format "- [[file:%s][%s]]\n"
                                (file-relative-name (car it) org-roam-directory)
                                (org-roam--get-title-or-slug (car it))))
-           "" (org-roam-db-query [:select [from]
+           "" (org-roam-db-query [:select :distinct [from]
                                   :from links
                                   :where (= to $s1)
-                                  :and from :not :like $s2] file "%private%"))
-        ""))
+                                  :and from :not :like $s2] file "%private%")))
+      "")
     (defun my/org-export-preprocessor (_backend)
       (let ((links (my/org-roam--backlinks-list (buffer-file-name))))
         (unless (string= links "")
           (save-excursion
             (goto-char (point-max))
             (insert (concat "\n* Backlinks\n" links))))))
-    (add-hook 'org-export-before-processing-hook 'my/org-export-preprocessor))
+    (add-hook 'org-export-before-processing-hook #'my/org-export-preprocessor))
 
 (after! (org ox-hugo)
   (defun jethro/conditional-hugo-enable ()
@@ -675,3 +675,8 @@
   :mode ("\\.yml\\'" . yaml-mode))
 
 (use-package! org-roam-server)
+
+(use-package! emmet-mode
+  :hook
+  ((sgml-mode . emmet-mode)
+   (css-mode . emmet-mode)))
