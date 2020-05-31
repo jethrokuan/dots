@@ -440,26 +440,33 @@
         org-roam-tag-sources '(prop last-directory))
   :config
   (setq org-roam-capture-templates
-        '(("d" "default" plain (function org-roam--capture-get-point)
+        '(("l" "lit" plain (function org-roam--capture-get-point)
            "%?"
-           :file-name "${slug}"
+           :file-name "lit/${slug}"
            :head "#+SETUPFILE:./hugo_setup.org
-#+HUGO_SECTION: zettels
+#+HUGO_SLUG: ${slug}
+#+TITLE: ${title}\n"
+           :unnarrowed t)
+          ("c" "concept" plain (function org-roam--capture-get-point)
+           "%?"
+           :file-name "concepts/${slug}"
+           :head "#+SETUPFILE:./hugo_setup.org
 #+HUGO_SLUG: ${slug}
 #+TITLE: ${title}\n"
            :unnarrowed t)
           ("p" "private" plain (function org-roam-capture--get-point)
            "%?"
-           :file-name "private-${slug}"
+           :file-name "private/${slug}"
            :head "#+TITLE: ${title}\n"
            :unnarrowed t)))
   (setq org-roam-ref-capture-templates
         '(("r" "ref" plain (function org-roam-capture--get-point)
            "%?"
-           :file-name "websites/${slug}"
+           :file-name "lit/${slug}"
            :head "#+SETUPFILE:./hugo_setup.org
 #+ROAM_KEY: ${ref}
 #+HUGO_SLUG: ${slug}
+#+ROAM_TAGS: website
 #+TITLE: ${title}
 
 - source :: ${ref}"
@@ -624,7 +631,7 @@
   (setq orb-templates
         `(("r" "ref" plain (function org-roam-capture--get-point)
            ""
-           :file-name "${slug}"
+           :file-name "lit/${slug}"
            :head ,(concat
                    "#+TITLE: ${=key=}: ${title}\n"
                    "#+ROAM_KEY: ${ref}\n\n"
