@@ -478,7 +478,7 @@
   (set-company-backend! 'org-mode '(company-org-roam company-yasnippet company-dabbrev)))
 
 (after! (org org-roam)
-    (defun my/org-roam--backlinks-list (file)
+    (defun jethro/org-roam--backlinks-list (file)
       (if (org-roam--org-roam-file-p file)
           (--reduce-from
            (concat acc (format "- [[file:%s][%s]]\n"
@@ -487,15 +487,15 @@
            "" (org-roam-db-query [:select :distinct [from]
                                   :from links
                                   :where (= to $s1)
-                                  :and from :not :like $s2] file "%private%")))
-      "")
-    (defun my/org-export-preprocessor (_backend)
+                                  :and from :not :like $s2] file "%private%"))
+        ""))
+    (defun jethro/org-export-preprocessor (_backend)
       (let ((links (my/org-roam--backlinks-list (buffer-file-name))))
         (unless (string= links "")
           (save-excursion
             (goto-char (point-max))
-            (insert (concat "\n* Backlinks\n" links))))))
-    (add-hook 'org-export-before-processing-hook #'my/org-export-preprocessor))
+            (insert (concat "\n** Backlinks\n" links))))))
+    (add-hook 'org-export-before-processing-hook #'jethro/org-export-preprocessor))
 
 (after! (org ox-hugo)
   (defun jethro/conditional-hugo-enable ()
