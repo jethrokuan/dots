@@ -479,22 +479,18 @@
 
 (after! (org org-roam)
     (defun jethro/org-roam--backlinks-list (file)
-      (if (org-roam--org-roam-file-p file)
-          (--reduce-from
-           (concat acc (format "- [[file:%s][%s]]\n"
-                               (file-relative-name (car it) org-roam-directory)
-                               (org-roam--get-title-or-slug (car it))))
-           "" (org-roam-db-query [:select :distinct [from]
-                                  :from links
-                                  :where (= to $s1)
-                                  :and from :not :like $s2] file "%private%"))
-        ""))
+      (when (org-roam--org-roam-file-p file)
+          (mapcar #'car (org-roam-db-query [:select :distinct [from]
+                                           :from links
+                                           :where (= to $s1)
+                                           :and from :not :like $s2] file "%private%"))))
     (defun jethro/org-export-preprocessor (_backend)
-      (let ((links (my/org-roam--backlinks-list (buffer-file-name))))
-        (unless (string= links "")
-          (save-excursion
-            (goto-char (point-max))
-            (insert (concat "\n** Backlinks\n" links))))))
+      (when-let ((links (jethro/org-roam--backlinks-list (buffer-file-name))))
+        (insert "\n** Backlinks\n")
+        (dolist (link links)
+          (insert (format "- [[file:%s][%s]]\n"
+                          (file-relative-name link org-roam-directory)
+                          (org-roam--get-title-or-slug link))))))
     (add-hook 'org-export-before-processing-hook #'jethro/org-export-preprocessor))
 
 (after! (org ox-hugo)
