@@ -84,3 +84,4 @@
   :recipe (:host github :repo "org-roam/org-roam-server"))
 (package! forge)
 (package! emmet-mode)
+(package! buttercup)
