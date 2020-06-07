@@ -443,31 +443,31 @@
         '(("l" "lit" plain (function org-roam--capture-get-point)
            "%?"
            :file-name "lit/${slug}"
-           :head "#+SETUPFILE:./hugo_setup.org
-#+HUGO_SLUG: ${slug}
-#+TITLE: ${title}\n"
+           :head "#+setupfile:./hugo_setup.org
+#+hugo_slug: ${slug}
+#+title: ${title}\n"
            :unnarrowed t)
           ("c" "concept" plain (function org-roam--capture-get-point)
            "%?"
            :file-name "concepts/${slug}"
-           :head "#+SETUPFILE:./hugo_setup.org
-#+HUGO_SLUG: ${slug}
-#+TITLE: ${title}\n"
+           :head "#+setupfile:./hugo_setup.org
+#+hugo_slug: ${slug}
+#+title: ${title}\n"
            :unnarrowed t)
           ("p" "private" plain (function org-roam-capture--get-point)
            "%?"
            :file-name "private/${slug}"
-           :head "#+TITLE: ${title}\n"
+           :head "#+title: ${title}\n"
            :unnarrowed t)))
   (setq org-roam-ref-capture-templates
         '(("r" "ref" plain (function org-roam-capture--get-point)
            "%?"
            :file-name "lit/${slug}"
-           :head "#+SETUPFILE:./hugo_setup.org
-#+ROAM_KEY: ${ref}
-#+HUGO_SLUG: ${slug}
-#+ROAM_TAGS: website
-#+TITLE: ${title}
+           :head "#+setupfile:./hugo_setup.org
+#+roam_key: ${ref}
+#+hugo_slug: ${slug}
+#+roam_tags: website
+#+title: ${title}
 
 - source :: ${ref}"
            :unnarrowed t))))
@@ -640,8 +640,8 @@
            ""
            :file-name "lit/${slug}"
            :head ,(concat
-                   "#+TITLE: ${=key=}: ${title}\n"
-                   "#+ROAM_KEY: ${ref}\n\n"
+                   "#+title: ${=key=}: ${title}\n"
+                   "#+roam_key: ${ref}\n\n"
                    "* ${title}\n"
                    "  :PROPERTIES:\n"
                    "  :Custom_ID: ${=key=}\n"
@@ -659,8 +659,8 @@
         bibtex-completion-pdf-field "file"
         bibtex-completion-notes-template-multiple-files
          (concat
-          "#+TITLE: ${title}\n"
-          "#+ROAM_KEY: cite:${=key=}\n"
+          "#+title: ${title}\n"
+          "#+roam_key: cite:${=key=}\n"
           "* TODO Notes\n"
           ":PROPERTIES:\n"
           ":Custom_ID: ${=key=}\n"
