@@ -437,7 +437,8 @@
   (setq org-roam-directory "/home/jethro/Dropbox/org/braindump/org/"
         org-roam-db-location "/home/jethro/org-roam.db"
         org-roam-graph-exclude-matcher "private"
-        org-roam-tag-sources '(prop last-directory))
+        org-roam-tag-sources '(prop last-directory)
+        org-id-link-to-org-use-id t)
   :config
   (setq org-roam-capture-templates
         '(("l" "lit" plain (function org-roam--capture-get-point)
@@ -521,10 +522,9 @@
   ("C-c n t" . org-journal-today)
   :config
   (setq org-journal-date-prefix "#+TITLE: "
-        org-journal-file-format "private-%Y-%m-%d.org"
-        org-journal-dir "/home/jethro/Dropbox/org/braindump/org/"
-        org-journal-carryover-items nil
-        org-journal-date-format "%Y-%m-%d")
+        org-journal-file-format "%Y-%m-%d.org"
+        org-journal-dir "/home/jethro/Dropbox/org/braindump/org/private/"
+        org-journal-carryover-items nil)
   (defun org-journal-today ()
     (interactive)
     (org-journal-new-entry t)))
