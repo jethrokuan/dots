@@ -1,42 +1,20 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets.
 (setq user-full-name "Jethro Kuan"
-      user-mail-address "jethrokuan95@gmail.com")
-
-;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
-;; are the three important ones:
-;;
-;; + `doom-font'
-;; + `doom-variable-pitch-font'
-;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;;
-;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
-;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "Iosevka" :size 16)
+      user-mail-address "jethrokuan95@gmail.com"
+      doom-font (font-spec :family "Iosevka" :size 16)
       doom-variable-pitch-font (font-spec :family "Libre Baskerville")
-      doom-serif-font (font-spec :family "Libre Baskerville"))
+      doom-serif-font (font-spec :family "Libre Baskerville")
+      doom-theme 'modus-operandi
+      display-line-numbers-type nil
 
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-(setq doom-theme 'modus-operandi)
+      company-idle-delay nil
+      lsp-ui-sideline-enable nil
+      lsp-enable-symbol-highlighting nil)
 
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/Dropbox/org/")
+(setq org-directory "~/Dropbox/org/"
+      org-ellipsis " ▼ ")
 
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type nil)
-
-;;; I-search
 (setq search-highlight t
       search-whitespace-regexp ".*?"
       isearch-lax-whitespace t
@@ -538,47 +516,6 @@
     (interactive)
     (org-journal-new-entry t)))
 
-(use-package! org-download
-  :commands
-  org-download-dnd
-  org-download-yank
-  org-download-screenshot
-  org-download-dnd-base64
-  :init
-  (map! :map org-mode-map
-        "s-Y" #'org-download-screenshot
-        "s-y" #'org-download-yank)
-  (pushnew! dnd-protocol-alist
-            '("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . +org-dragndrop-download-dnd-fn)
-            '("^data:" . org-download-dnd-base64))
-  (advice-add #'org-download-enable :override #'ignore)
-  :config
-  (defun +org/org-download-method (link)
-    (let ((filename
-           (file-name-nondirectory
-            (car (url-path-and-query
-                  (url-generic-parse-url link)))))
-          ;; Create folder name with current buffer name, and place in root dir
-          (dirname (concat "./images/"
-                           (replace-regexp-in-string " " "_"
-                                                     (downcase (file-name-base buffer-file-name)))))
-          (filename-with-timestamp (format "%s%s.%s"
-                                            (file-name-sans-extension filename)
-                                            (format-time-string org-download-timestamp)
-                                            (file-name-extension filename))))
-      (make-directory dirname t)
-      (expand-file-name filename-with-timestamp dirname)))
-  :config
-  (setq org-download-screenshot-method
-        (cond (IS-MAC "screencapture -i %s")
-              (IS-LINUX
-               (cond ((executable-find "maim")  "maim -s %s")
-                     ((executable-find "scrot") "scrot -s %s")))))
-  (if (memq window-system '(mac ns))
-      (setq org-download-screenshot-method "screencapture -i %s")
-    (setq org-download-screenshot-method "maim -s %s"))
-  (setq org-download-method 'my-org-download-method))
-
 (use-package! org-ref-ox-hugo
   :after org org-ref ox-hugo
   :config
@@ -619,9 +556,10 @@
 (use-package! outshine
   :commands (outshine-mode))
 
-(after! ivy-mode
+(after! ivy
   (map! :map ivy-minibuffer-map
-        "S-SPC" nil))
+        "S-SPC" nil)
+  (add-to-list 'ivy-re-builders-alist '(counsel-projectile-find-file . ivy--regex-plus)))
 
 (use-package! spell-fu
   :commands (spell-fu-mode)
