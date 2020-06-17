@@ -460,7 +460,7 @@
            :file-name "private/${slug}"
            :head "#+title: ${title}\n"
            :unnarrowed t)))
-  (setq org-roam-ref-capture-templates
+  (setq org-roam-capture-ref-templates
         '(("r" "ref" plain (function org-roam-capture--get-point)
            "%?"
            :file-name "lit/${slug}"
@@ -491,7 +491,7 @@
     (interactive)
     (dolist (f (org-roam--list-all-files))
       (with-current-buffer (find-file f)
-        (when (s-contains? "SETUPFILE" (buffer-string))
+        (when (s-contains? "setupfile" (buffer-string))
           (org-hugo-export-wim-to-md)))))
   (defun jethro/org-roam--backlinks-list (file)
     (when (org-roam--org-roam-file-p file)
@@ -506,6 +506,15 @@
         (insert (format "- [[file:%s][%s]]\n"
                         (file-relative-name link org-roam-directory)
                         (org-roam--get-title-or-slug link))))))
+
+  (defun jethro/org-roam-export-updated ()
+    "Re-export files that are linked to the current file."
+    (let ((files (org-roam-sql [:select [to] :from links :where (= from $s1)] buffer-file-name)))
+    (interactive)
+      (dolist (f files)
+        (with-current-buffer (find-file-noselect (car f))
+          (when (s-contains? "setupfile" (buffer-string))
+          (org-hugo-export-wim-to-md))))))
   (add-hook 'org-export-before-processing-hook #'jethro/org-export-preprocessor))
 
 (after! (org ox-hugo)
