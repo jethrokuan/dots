@@ -26,6 +26,12 @@
       isearch-yank-on-move 'shift
       isearch-allow-scroll 'unlimited)
 
+;;; Ctrlf
+(use-package! ctrlf
+  :demand t
+  :config
+  (ctrlf-mode +1))
+
 ;;; notmuch
 (use-package! notmuch
   :commands (notmuch)

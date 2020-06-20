@@ -85,3 +85,4 @@
 (package! forge)
 (package! emmet-mode)
 (package! buttercup)
+(package! ctrlf)
