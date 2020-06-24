@@ -26,11 +26,6 @@
       isearch-yank-on-move 'shift
       isearch-allow-scroll 'unlimited)
 
-;;; Ctrlf
-(use-package! ctrlf
-  :demand t
-  :config
-  (ctrlf-mode +1))
 
 ;;; notmuch
 (use-package! notmuch
@@ -663,3 +658,18 @@ With a prefix ARG always prompt for command to use."
     (call-process program nil 0 nil current-file-name)))
 
 (map! "C-c o o" 'jethro/open-with)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(git-link-use-commit t t)
+ '(safe-local-variable-values
+   '((eval require 'org-roam-dev)
+     (eval jethro/conditional-hugo-enable))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-roam-link ((t (:inherit org-link :foreground "#005200")))))
