@@ -517,21 +517,10 @@
     (interactive)
     (org-journal-new-entry t)))
 
-(use-package! org-ref-ox-hugo
-  :after org org-ref ox-hugo
+(use-package! citeproc-org
+  :after org
   :config
-  (add-to-list 'org-ref-formatted-citation-formats
-               '("md"
-                 ("article" . "${author}, *${title}*, ${journal}, *${volume}(${number})*, ${pages} (${year}). ${doi}")
-                 ("inproceedings" . "${author}, *${title}*, In ${editor}, ${booktitle} (pp. ${pages}) (${year}). ${address}: ${publisher}.")
-                 ("book" . "${author}, *${title}* (${year}), ${address}: ${publisher}.")
-                 ("phdthesis" . "${author}, *${title}* (Doctoral dissertation) (${year}). ${school}, ${address}.")
-                 ("inbook" . "${author}, *${title}*, In ${editor} (Eds.), ${booktitle} (pp. ${pages}) (${year}). ${address}: ${publisher}.")
-                 ("incollection" . "${author}, *${title}*, In ${editor} (Eds.), ${booktitle} (pp. ${pages}) (${year}). ${address}: ${publisher}.")
-                 ("proceedings" . "${editor} (Eds.), _${booktitle}_ (${year}). ${address}: ${publisher}.")
-                 ("unpublished" . "${author}, *${title}* (${year}). Unpublished manuscript.")
-                 ("misc" . "${author} (${year}). *${title}*. Retrieved from [${howpublished}](${howpublished}). ${note}.")
-                 (nil . "${author}, *${title}* (${year})."))))
+  (citeproc-org-setup))
 
 (use-package! mathpix.el
   :commands (mathpix-screenshot)

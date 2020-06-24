@@ -60,8 +60,6 @@
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! org-journal)
-(package! org-ref-ox-hugo
-  :recipe (:host github :repo "jethrokuan/org-ref-ox-hugo" :branch "custom/overrides"))
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 (package! anki-editor)
@@ -85,3 +83,4 @@
 (package! forge)
 (package! emmet-mode)
 (package! buttercup)
+(package! citeproc-org)
