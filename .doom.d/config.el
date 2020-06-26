@@ -566,11 +566,10 @@
 (use-package! mathpix.el
   :commands (mathpix-screenshot)
   :init
-  (map! "C-x m" #'mathpix-screenshot)
-  :config
   (setq mathpix-screenshot-method "maim -s %s"
         mathpix-app-id (password-store-get "mathpix/app-id")
-        mathpix-app-key (password-store-get "mathpix/app-key")))
+        mathpix-app-key (password-store-get "mathpix/app-key"))
+  (map! "C-x m" #'mathpix-screenshot))
 
 (use-package! anki-editor
   :commands (anki-editor-mode))
