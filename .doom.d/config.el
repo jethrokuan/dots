@@ -464,6 +464,12 @@
   :config
   (set-company-backend! 'org-mode '(company-org-roam company-yasnippet company-dabbrev)))
 
+(after! (org-roam)
+  (winner-mode +1)
+  (map! :map winner-mode-map
+        "<M-right>" #'winner-redo
+        "<M-left>" #'winner-undo))
+
 (after! (org org-roam)
   (defun jethro/org-roam-export-all ()
     "Re-exports all Org-roam files to Hugo markdown."
@@ -599,7 +605,6 @@
 ;; HOTFIX
 (require 'org-journal)
 
-(add-hook 'org-mode-hook 'writeroom-mode)
 (after! mixed-pitch
   (dolist (f (-filter (lambda (sym)
                         (s-prefix? "company-" (symbol-name sym)))
@@ -687,6 +692,7 @@ With a prefix ARG always prompt for command to use."
     (call-process program nil 0 nil current-file-name)))
 
 (map! "C-c o o" 'jethro/open-with)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -695,7 +701,8 @@ With a prefix ARG always prompt for command to use."
  '(git-link-use-commit t t)
  '(safe-local-variable-values
    '((eval require 'org-roam-dev)
-     (eval jethro/conditional-hugo-enable))))
+     (eval jethro/conditional-hugo-enable)
+     (checkdoc-package-keywords-flag))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
