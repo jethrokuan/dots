@@ -415,6 +415,7 @@
         :desc "org-roam-capture" "c" #'org-roam-capture)
   (setq org-roam-directory "/home/jethro/Dropbox/org/braindump/org/"
         org-roam-db-location "/home/jethro/org-roam.db"
+        org-roam-db-gc-threshold most-positive-fixnum
         org-roam-graph-exclude-matcher "private"
         org-roam-tag-sources '(prop last-directory)
         org-id-link-to-org-use-id t)
@@ -700,7 +701,9 @@ With a prefix ARG always prompt for command to use."
  ;; If there is more than one, they won't work right.
  '(git-link-use-commit t t)
  '(safe-local-variable-values
-   '((eval require 'org-roam-dev)
+   '((org-src-preserve-indentation)
+     (eval require 'ol-info)
+     (eval require 'org-roam-dev)
      (eval jethro/conditional-hugo-enable)
      (checkdoc-package-keywords-flag))))
 (custom-set-faces
