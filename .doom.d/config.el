@@ -623,6 +623,7 @@
            ""
            :file-name "lit/${slug}"
            :head ,(concat
+                   "#+setupfile: ./hugo_setup.org\n"
                    "#+title: ${=key=}: ${title}\n"
                    "#+roam_key: ${ref}\n\n"
                    "* ${title}\n"
