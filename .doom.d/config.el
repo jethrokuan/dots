@@ -35,7 +35,10 @@
   (map! :map notmuch-search-mode-map
         :desc "toggle read" "t" #'+notmuch/toggle-read
         :desc "Reply to thread" "r" #'notmuch-search-reply-to-thread
-        :desc "Reply to thread sender" "R" #'notmuch-search-reply-to-thread-sender)
+        :desc "Reply to thread sender" "R" #'notmuch-search-reply-to-thread-sender
+        :desc "Filter" "/" #'notmuch-search-filter
+        :desc "Archive All" "A" #'+notmuch-archive-all
+        :desc "Delete All" "D" #'+notmuch-delete-all)
   (map! :map notmuch-show-mode-map
         :desc "Next link" "<tab>" #'org-next-link
         :desc "Previous link" "<backtab>" #'org-previous-link
@@ -56,7 +59,7 @@
         message-sendmail-f-is-evil nil
         message-kill-buffer-on-exit t
         notmuch-always-prompt-for-sender t
-        notmuch-archive-tags '("-inbox" "-unread")
+        notmuch-archive-tags '("-unread")
         notmuch-crypto-process-mime t
         notmuch-hello-sections '(notmuch-hello-insert-saved-searches)
         notmuch-labeler-hide-known-labels t
@@ -68,9 +71,21 @@
                                  (:name "to-me" :query "tag:inbox and tag:to-me")
                                  (:name "personal" :query "tag:inbox and tag:personal")
                                  (:name "org-roam" :query "tag:inbox and tag:roam")
-                                 (:name "nushackers" :query "tag:inbox and tag:nushackers")
                                  (:name "nus" :query "tag:inbox and tag:nus")
-                                 (:name "drafts" :query "tag:draft"))))
+                                 (:name "drafts" :query "tag:draft")))
+
+  (defun +notmuch-archive-all ()
+    "Archive all the emails in the current view."
+    (interactive)
+    (notmuch-search-archive-thread nil (point-min) (point-max)))
+
+
+  (defun +notmuch-delete-all ()
+    "Archive all the emails in the current view.
+Mark them for deletion by cron job."
+    (interactive)
+    (notmuch-search-tag-all '("+deleted"))
+    (+notmuch-archive-all)))
 
 (after! dired
   (setq dired-listing-switches "-aBhl  --group-directories-first"
