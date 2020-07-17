@@ -278,6 +278,7 @@ Mark them for deletion by cron job."
 (setq org-refile-allow-creating-parent-nodes 'confirm)
 (setq org-refile-targets '(("next.org" :level . 0)
                            ("someday.org" :level . 0)
+                           ("work.org" :level . 0)
                            ("reading.org" :level . 1)
                            ("projects.org" :maxlevel . 1)))
 
@@ -405,8 +406,8 @@ Mark them for deletion by cron job."
                                               ))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "Projects")
-                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "projects.org")))
-                                              ))
+                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "projects.org")
+                                                                  ,(concat jethro/org-agenda-directory "work.org")))))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "One-off Tasks")
                                               (org-agenda-files '(,(concat jethro/org-agenda-directory "next.org")))
@@ -678,6 +679,14 @@ With a prefix ARG always prompt for command to use."
     (call-process program nil 0 nil current-file-name)))
 
 (map! "C-c o o" 'jethro/open-with)
+
+(use-package! org-gcal
+  :commands (org-gcal-sync)
+  :config
+  (setq org-gcal-client-id (password-store-get "gmail/org-gcal-client")
+        org-gcal-client-secret (password-store-get "gmail/org-gcal-secret")
+        org-gcal-file-alist `(("dckbhpq9bq13m03llerl09slgo@group.calendar.google.com" . ,(concat jethro/org-agenda-directory "calendars/lab.org"))
+                              ("jethrokuan95@gmail.com" . ,(concat jethro/org-agenda-directory "calendars/personal.org")))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

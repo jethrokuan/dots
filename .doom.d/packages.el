@@ -84,3 +84,4 @@
 (package! emmet-mode)
 (package! buttercup)
 (package! citeproc-org)
+(package! org-gcal)
