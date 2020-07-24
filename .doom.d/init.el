@@ -142,6 +142,7 @@
        (org              ; organize your plain life in plain text
         ;; +dragndrop ; drag & drop files/images into org buffersq
         +noter
+        +journal
         +hugo            ; use Emacs for hugo blogging
         ;;+jupyter        ; ipython/jupyter support for babel
         ;;+pandoc          ; export-with-pandoc support

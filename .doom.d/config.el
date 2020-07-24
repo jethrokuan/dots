@@ -534,18 +534,11 @@ Mark them for deletion by cron job."
     (setq org-download-screenshot-method "maim -s %s"))
   (setq org-download-method '+org/org-download-method))
 
-(use-package! org-journal
-  :bind
-  ("C-c n j" . org-journal-new-entry)
-  ("C-c n t" . org-journal-today)
-  :config
+(after! org-journal
   (setq org-journal-date-prefix "#+TITLE: "
         org-journal-file-format "%Y-%m-%d.org"
         org-journal-dir "/home/jethro/Dropbox/org/braindump/org/private/"
-        org-journal-carryover-items nil)
-  (defun org-journal-today ()
-    (interactive)
-    (org-journal-new-entry t)))
+        org-journal-carryover-items nil))
 
 (use-package! citeproc-org
   :after org
@@ -585,9 +578,6 @@ Mark them for deletion by cron job."
   :commands (spell-fu-mode)
   :init
   (add-hook 'text-mode-hook #'spell-fu-mode))
-
-;; HOTFIX
-(require 'org-journal)
 
 (after! mixed-pitch
   (dolist (f (-filter (lambda (sym)
