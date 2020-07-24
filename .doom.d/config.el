@@ -188,9 +188,19 @@ Mark them for deletion by cron job."
         "C-M-)" #'sp-backward-slurp-sexp
         "C-M-)" #'sp-backward-barf-sexp))
 
-(use-package! org
-  :mode ("\\.org\\'" . org-mode)
+
+
+(after! org
+  (use-package! ol-notmuch
   :init
+  (map! :map notmuch-show-mode-map "C" #'jethro/org-capture-email)
+  (defun jethro/org-capture-email ()
+    (interactive)
+    (org-capture nil "e")))
+
+  (with-eval-after-load 'flycheck
+    (flycheck-add-mode 'proselint 'org-mode))
+
   (map! :leader
         :prefix "n"
         "c" #'org-capture)
@@ -221,17 +231,6 @@ Mark them for deletion by cron job."
                                        ("d" . "definition")
                                        ("t" . "theorem")))
 
-  (with-eval-after-load 'flycheck
-    (flycheck-add-mode 'proselint 'org-mode)))
-
-(use-package! ol-notmuch
-  :init
-  (map! :map notmuch-show-mode-map "C" #'jethro/org-capture-email)
-  (defun jethro/org-capture-email ()
-    (interactive)
-    (org-capture nil "e")))
-
-(after! org
   (defun jethro/org-archive-done-tasks ()
     "Archive all done tasks."
     (interactive)
