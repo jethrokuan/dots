@@ -12,6 +12,8 @@
       lsp-ui-sideline-enable nil
       lsp-enable-symbol-highlighting nil)
 
+(setq +emacs-lisp-outline-regexp "\\([ \t]*;;;;* [^ \t\n]\\|\\((def\\)\\)")
+
 (setq org-directory "~/Dropbox/org/"
       org-ellipsis " ▼ ")
 
