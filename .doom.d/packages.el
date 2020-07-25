@@ -84,3 +84,4 @@
 (package! buttercup)
 (package! citeproc-org)
 (package! org-gcal)
+(package! bicycle)

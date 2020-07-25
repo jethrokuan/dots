@@ -12,8 +12,6 @@
       lsp-ui-sideline-enable nil
       lsp-enable-symbol-highlighting nil)
 
-(setq +emacs-lisp-outline-regexp "\\([ \t]*;;;;* [^ \t\n]\\|\\((def\\)\\)")
-
 (setq org-directory "~/Dropbox/org/"
       org-ellipsis " ▼ ")
 
@@ -676,6 +674,18 @@ With a prefix ARG always prompt for command to use."
         org-gcal-client-secret (password-store-get "gmail/org-gcal-secret")
         org-gcal-file-alist `(("dckbhpq9bq13m03llerl09slgo@group.calendar.google.com" . ,(concat jethro/org-agenda-directory "calendars/lab.org"))
                               ("jethrokuan95@gmail.com" . ,(concat jethro/org-agenda-directory "calendars/personal.org")))))
+
+(use-package! bicycle
+  :after outline
+  :init
+  (map! :map outline-minor-mode-map
+        [C-tab] #'bicycle-cycle
+        [backtab] #'bicycle-cycle-global))
+
+(use-package prog-mode
+  :config
+  (add-hook 'prog-mode-hook 'outline-minor-mode)
+  (add-hook 'prog-mode-hook 'hs-minor-mode))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
