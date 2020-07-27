@@ -13,7 +13,8 @@
       lsp-enable-symbol-highlighting nil)
 
 (setq org-directory "~/Dropbox/org/"
-      org-ellipsis " ▼ ")
+      org-ellipsis " ▼ "
+      org-adapt-indentation nil)
 
 (setq search-highlight t
       search-whitespace-regexp ".*?"
