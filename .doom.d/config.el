@@ -690,6 +690,47 @@ With a prefix ARG always prompt for command to use."
   (add-hook 'prog-mode-hook 'outline-minor-mode)
   (add-hook 'prog-mode-hook 'hs-minor-mode))
 
+(defun jethro/ledger-cleanup-csv ()
+  (save-excursion
+    (goto-char (point-min))
+    (while (search-forward "\n" nil t)
+      (beginning-of-line)
+      (delete-horizontal-space)
+      (end-of-line)
+      (delete-horizontal-space)
+      (when (string-equal (buffer-substring-no-properties (line-beginning-position) (line-end-position))
+                          "")
+        (delete-char -1)))))
+
+(defun jethro/ledger-import-sc (file)
+  (interactive "f")
+  (let* ((cleaned-content (with-temp-buffer
+                            (insert-file-contents file)
+                            (jethro/ledger-cleanup-csv)
+                            (buffer-string)))
+         (lines (split-string cleaned-content "\n"))
+         (account (completing-read "account: " (ledger-accounts-list-in-buffer))))
+    (save-match-data
+      (dolist (line lines)
+        (let* ((items (split-string line ","))
+               (date-maybe (car items)))
+          (when (string-match "\\([0-9][0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9][0-9][0-9]\\)" date-maybe)
+            (pcase-let ((`(_ ,info ,foreign ,sgd) items))
+              (let ((date (format "%s/%s/%s" ;YYYY/MM/DD
+                                  (match-string 3 date-maybe)
+                                  (match-string 2 date-maybe)
+                                  (match-string 1 date-maybe))))
+                (when (string-match "SGD \\(.*\\) \\(DR\\|CR\\)" sgd)
+                  (let ((cr-p (string-equal (match-string 2 sgd) "CR"))
+                        (value (match-string 1 sgd)))
+                    (insert date
+                            " * " info "\n"
+                            "    " account
+                            "   " (if cr-p "-" "") "S$" value "\n"
+                            "    " (completing-read info (ledger-accounts-list-in-buffer))
+                            "\n\n\n")))))))))))
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
