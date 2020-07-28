@@ -14,7 +14,8 @@
 
 (setq org-directory "~/Dropbox/org/"
       org-ellipsis " ▼ "
-      org-adapt-indentation nil)
+      org-adapt-indentation nil
+      org-habit-show-habits-only-for-today t)
 
 (setq search-highlight t
       search-whitespace-regexp ".*?"
@@ -198,6 +199,7 @@ Mark them for deletion by cron job."
   (defun jethro/org-capture-email ()
     (interactive)
     (org-capture nil "e")))
+  (require 'org-habit)
 
   (with-eval-after-load 'flycheck
     (flycheck-add-mode 'proselint 'org-mode))
