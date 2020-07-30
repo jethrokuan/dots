@@ -724,6 +724,9 @@ With a prefix ARG always prompt for command to use."
                             "    " (completing-read info (ledger-accounts-list-in-buffer))
                             "\n\n\n")))))))))))
 
+(after! org-latex
+  (setq org-latex-pdf-process (list "latexmk -f -xelatex %f")))
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
