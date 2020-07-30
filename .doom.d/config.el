@@ -2,6 +2,7 @@
 
 (setq user-full-name "Jethro Kuan"
       user-mail-address "jethrokuan95@gmail.com"
+      doom-scratch-intial-major-mode 'lisp-interaction-mode
       doom-font (font-spec :family "Iosevka" :size 16)
       doom-variable-pitch-font (font-spec :family "Libre Baskerville")
       doom-serif-font (font-spec :family "Libre Baskerville")
@@ -28,6 +29,9 @@
       isearch-yank-on-move 'shift
       isearch-allow-scroll 'unlimited)
 
+(setq direnv-always-show-summary nil)
+
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 
 ;;; notmuch
 (use-package! notmuch
@@ -469,6 +473,10 @@ Mark them for deletion by cron job."
 (use-package! org-roam-protocol
   :after org-protocol)
 
+(after! company
+  (map! :map company-mode-map
+        "<tab>" #'company-indent-or-complete-common))
+
 (use-package! company-posframe
   :hook (company-mode . company-posframe-mode))
 
@@ -569,11 +577,6 @@ Mark them for deletion by cron job."
   (map! :map ivy-minibuffer-map
         "S-SPC" nil)
   (add-to-list 'ivy-re-builders-alist '(counsel-projectile-find-file . ivy--regex-plus)))
-
-(use-package! spell-fu
-  :commands (spell-fu-mode)
-  :init
-  (add-hook 'text-mode-hook #'spell-fu-mode))
 
 (after! mixed-pitch
   (dolist (f (-filter (lambda (sym)

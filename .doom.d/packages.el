@@ -68,8 +68,6 @@
 (package! outshine)
 (package! company-org-roam
   :recipe (:host github :repo "jethrokuan/company-org-roam"))
-(package! spell-fu
-  :recipe (:host gitlab :repo "ideasman42/emacs-spell-fu"))
 (package! org-download)
 (package! ox-texinfo+
   :recipe (:host github :repo "tarsius/ox-texinfo-plus"))
