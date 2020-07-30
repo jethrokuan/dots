@@ -474,8 +474,7 @@ Mark them for deletion by cron job."
   :after org-protocol)
 
 (after! company
-  (map! :map company-mode-map
-        "<tab>" #'company-indent-or-complete-common))
+  (map! "M-/" #'company-indent-or-complete-common))
 
 (use-package! company-posframe
   :hook (company-mode . company-posframe-mode))
