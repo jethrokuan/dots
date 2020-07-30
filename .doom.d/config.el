@@ -247,7 +247,7 @@ Mark them for deletion by cron job."
         `(("i" "inbox" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
            "* TODO %?")
           ("e" "email" entry (file+headline ,(concat jethro/org-agenda-directory "emails.org") "Emails")
-               "* TODO [#A] Reply: %a :@home:@school:"
+               "* TODO [#A] Reply: %a :@home:@office:"
                :immediate-finish t)
           ("c" "org-protocol-capture" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
                "* TODO [[%:link][%:description]]\n\n %i"
@@ -265,14 +265,11 @@ Mark them for deletion by cron job."
       org-log-into-drawer t
       org-log-state-notes-insert-after-drawers nil)
 
-(setq org-tag-alist (quote (("@errand" . ?e)
-                            ("@office" . ?o)
-                            ("@home" . ?h)
-                            ("@school" . ?s)
-                            (:newline)
-                            ("WAITING" . ?w)
-                            ("HOLD" . ?H)
-                            ("CANCELLED" . ?c))))
+(setq org-tag-alist '(("@errand" . ?e)
+                      ("@office" . ?o)
+                      ("@home" . ?h)
+                      (:newline)
+                      ("CANCELLED" . ?c)))
 
 (setq org-fast-tag-selection-single-key nil)
 (setq org-refile-use-outline-path 'file
