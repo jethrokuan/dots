@@ -529,11 +529,8 @@ Mark them for deletion by cron job."
   (setq org-download-screenshot-method
         (cond (IS-MAC "screencapture -i %s")
               (IS-LINUX
-               (cond ((executable-find "maim")  "maim -s %s")
+               (cond ((executable-find "maim")  "maim -u -s %s")
                      ((executable-find "scrot") "scrot -s %s")))))
-  (if (memq window-system '(mac ns))
-      (setq org-download-screenshot-method "screencapture -i %s")
-    (setq org-download-screenshot-method "maim -s %s"))
   (setq org-download-method '+org/org-download-method))
 
 (after! org-journal
@@ -552,7 +549,7 @@ Mark them for deletion by cron job."
   :init
   (map! "C-x m" #'mathpix-screenshot)
   :config
-  (setq mathpix-screenshot-method "maim -s %s"
+  (setq mathpix-screenshot-method "maim -u -s %s"
         mathpix-app-id (password-store-get "mathpix/app-id")
         mathpix-app-key (password-store-get "mathpix/app-key")))
 
