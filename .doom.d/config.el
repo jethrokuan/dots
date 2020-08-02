@@ -468,7 +468,8 @@ Mark them for deletion by cron job."
 #+title: ${title}
 
 - source :: ${ref}"
-           :unnarrowed t))))
+           :unnarrowed t)))
+  (set-company-backend! 'org-mode '(company-capf company-yasnippet)))
 
 (use-package! org-roam-protocol
   :after org-protocol)
@@ -479,11 +480,11 @@ Mark them for deletion by cron job."
 (use-package! company-posframe
   :hook (company-mode . company-posframe-mode))
 
-(use-package company-org-roam
-  :when (featurep! :completion company)
-  :after org-roam
-  :config
-  (set-company-backend! 'org-mode '(company-org-roam company-yasnippet company-dabbrev)))
+;; (use-package company-org-roam
+;;   :when (featurep! :completion company)
+;;   :after org-roam
+;;   :config
+;;   (set-company-backend! 'org-mode '(company-org-roam company-yasnippet company-dabbrev)))
 
 (after! (org-roam)
   (winner-mode +1)
