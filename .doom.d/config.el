@@ -384,6 +384,35 @@ Mark them for deletion by cron job."
     (interactive)
     (org-agenda nil " "))
   :config
+  (defun jethro/is-project-p ()
+  "Any task with a todo keyword subtask"
+  (save-restriction
+    (widen)
+    (let ((has-subtask)
+          (subtree-end (save-excursion (org-end-of-subtree t)))
+          (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+      (save-excursion
+        (forward-line 1)
+        (while (and (not has-subtask)
+                    (< (point) subtree-end)
+                    (re-search-forward "^\*+ " subtree-end t))
+          (when (member (org-get-todo-state) org-todo-keywords-1)
+            (setq has-subtask t))))
+      (and is-a-task has-subtask))))
+
+  (defun jethro/skip-projects ()
+  "Skip trees that are projects"
+  (save-restriction
+    (widen)
+    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+      (cond
+       ((org-is-habit-p)
+        next-headline)
+       ((jethro/is-project-p)
+        next-headline)
+       (t
+        nil)))))
+
   (setq org-columns-default-format "%40ITEM(Task) %Effort(EE){:} %CLOCKSUM(Time Spent) %SCHEDULED(Scheduled) %DEADLINE(Deadline)")
   (setq org-agenda-custom-commands `((" " "Agenda"
                                       ((agenda ""
@@ -400,6 +429,7 @@ Mark them for deletion by cron job."
                                               (org-agenda-files '(,(concat jethro/org-agenda-directory "projects.org")))))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "Active Projects")
+                                              (org-agenda-skip-function #'jethro/skip-projects)
                                               (org-agenda-files '(,(concat jethro/org-agenda-directory "projects.org")))))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "One-off Tasks")
