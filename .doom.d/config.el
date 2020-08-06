@@ -13,7 +13,7 @@
       lsp-ui-sideline-enable nil
       lsp-enable-symbol-highlighting nil)
 
-(setq org-directory "~/Dropbox/org/"
+(setq org-directory "~/.org/"
       org-ellipsis " ▼ "
       org-adapt-indentation nil
       org-habit-show-habits-only-for-today t)
@@ -243,7 +243,7 @@ Mark them for deletion by cron job."
     (interactive)
     (org-map-entries 'org-archive-subtree "/DONE" 'file))
   (require 'find-lisp)
-  (setq jethro/org-agenda-directory "~/Dropbox/org/gtd/")
+  (setq jethro/org-agenda-directory (file-truename "~/.org/gtd/"))
   (setq org-agenda-files
         (find-lisp-find-files jethro/org-agenda-directory "\.org$")))
 
@@ -257,9 +257,7 @@ Mark them for deletion by cron job."
                "* TODO [[%:link][%:description]]\n\n %i"
                :immediate-finish t)
           ("w" "Weekly Review" entry (file+olp+datetree ,(concat jethro/org-agenda-directory "reviews.org"))
-           (file ,(concat jethro/org-agenda-directory "templates/weekly_review.org")))
-          ("r" "Reading" todo ""
-               ((org-agenda-files '(,(concat jethro/org-agenda-directory "reading.org")))))))
+           (file ,(concat jethro/org-agenda-directory "templates/weekly_review.org")))))
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -278,12 +276,8 @@ Mark them for deletion by cron job."
 (setq org-fast-tag-selection-single-key nil)
 (setq org-refile-use-outline-path 'file
       org-outline-path-complete-in-steps nil)
-(setq org-refile-allow-creating-parent-nodes 'confirm)
-(setq org-refile-targets '(("next.org" :level . 0)
-                           ("someday.org" :level . 0)
-                           ("work.org" :level . 0)
-                           ("reading.org" :level . 1)
-                           ("projects.org" :maxlevel . 1)))
+(setq org-refile-allow-creating-parent-nodes 'confirm
+      org-refile-targets '((org-agenda-files . (:level . 1))))
 
 (defvar jethro/org-agenda-bulk-process-key ?f
   "Default key for bulk processing inbox items.")
@@ -396,21 +390,17 @@ Mark them for deletion by cron job."
                                                ((org-agenda-span 'week)
                                                 (org-deadline-warning-days 365)))
                                        (todo "TODO"
-                                             ((org-agenda-overriding-header "To Refile")
+                                             ((org-agenda-overriding-header "Inbox")
                                               (org-agenda-files '(,(concat jethro/org-agenda-directory "inbox.org")))))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "Emails")
                                               (org-agenda-files '(,(concat jethro/org-agenda-directory "emails.org")))))
                                        (todo "NEXT"
                                              ((org-agenda-overriding-header "In Progress")
-                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "someday.org")
-                                                                  ,(concat jethro/org-agenda-directory "projects.org")
-                                                                  ,(concat jethro/org-agenda-directory "next.org")))
-                                              ))
+                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "projects.org")))))
                                        (todo "TODO"
-                                             ((org-agenda-overriding-header "Projects")
-                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "projects.org")
-                                                                  ,(concat jethro/org-agenda-directory "work.org")))))
+                                             ((org-agenda-overriding-header "Active Projects")
+                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "projects.org")))))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "One-off Tasks")
                                               (org-agenda-files '(,(concat jethro/org-agenda-directory "next.org")))
@@ -430,7 +420,7 @@ Mark them for deletion by cron job."
         :desc "org-roam-show-graph" "g" #'org-roam-show-graph
         :desc "org-roam-insert" "i" #'org-roam-insert
         :desc "org-roam-capture" "c" #'org-roam-capture)
-  (setq org-roam-directory "/home/jethro/Dropbox/org/braindump/org/"
+  (setq org-roam-directory (file-truename "~/.org/braindump/org/")
         org-roam-db-location "/home/jethro/org-roam.db"
         org-roam-db-gc-threshold most-positive-fixnum
         org-roam-graph-exclude-matcher "private"
@@ -469,7 +459,7 @@ Mark them for deletion by cron job."
 
 - source :: ${ref}"
            :unnarrowed t)))
-  (set-company-backend! 'org-mode '(company-capf company-yasnippet)))
+  (set-company-backend! 'org-mode '(company-capf)))
 
 (use-package! org-roam-protocol
   :after org-protocol)
@@ -479,12 +469,6 @@ Mark them for deletion by cron job."
 
 (use-package! company-posframe
   :hook (company-mode . company-posframe-mode))
-
-;; (use-package company-org-roam
-;;   :when (featurep! :completion company)
-;;   :after org-roam
-;;   :config
-;;   (set-company-backend! 'org-mode '(company-org-roam company-yasnippet company-dabbrev)))
 
 (after! (org-roam)
   (winner-mode +1)
@@ -541,7 +525,7 @@ Mark them for deletion by cron job."
 (after! org-journal
   (setq org-journal-date-prefix "#+TITLE: "
         org-journal-file-format "%Y-%m-%d.org"
-        org-journal-dir "/home/jethro/Dropbox/org/braindump/org/private/"
+        org-journal-dir (file-truename "~/.org/braindump/org/private/")
         org-journal-carryover-items nil))
 
 (use-package! citeproc-org
@@ -610,8 +594,8 @@ Mark them for deletion by cron job."
 
 (use-package! bibtex-completion
   :config
-  (setq bibtex-completion-notes-path "~/Dropbox/org/braindump/org/"
-        bibtex-completion-bibliography "~/Dropbox/org/braindump/org/biblio.bib"
+  (setq bibtex-completion-notes-path "~/.org/braindump/org/"
+        bibtex-completion-bibliography "~/.org/braindump/org/biblio.bib"
         bibtex-completion-pdf-field "file"
         bibtex-completion-notes-template-multiple-files
          (concat
@@ -729,7 +713,6 @@ With a prefix ARG always prompt for command to use."
 
 (after! org-latex
   (setq org-latex-pdf-process (list "latexmk -f -xelatex %f")))
-
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
