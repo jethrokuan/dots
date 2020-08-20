@@ -33,7 +33,6 @@
 
 (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 
-;;; notmuch
 (use-package! notmuch
   :commands (notmuch)
   :init
@@ -193,8 +192,6 @@ Mark them for deletion by cron job."
         "C-(" #'sp-backward-slurp-sexp
         "C-M-)" #'sp-backward-slurp-sexp
         "C-M-)" #'sp-backward-barf-sexp))
-
-
 
 (after! org
   (use-package! ol-notmuch
@@ -689,13 +686,6 @@ With a prefix ARG always prompt for command to use."
         org-gcal-file-alist `(("dckbhpq9bq13m03llerl09slgo@group.calendar.google.com" . ,(concat jethro/org-agenda-directory "calendars/lab.org"))
                               ("jethrokuan95@gmail.com" . ,(concat jethro/org-agenda-directory "calendars/personal.org")))))
 
-(use-package! bicycle
-  :after outline
-  :init
-  (map! :map outline-minor-mode-map
-        [C-tab] #'bicycle-cycle
-        [backtab] #'bicycle-cycle-global))
-
 (use-package prog-mode
   :config
   (add-hook 'prog-mode-hook 'outline-minor-mode)
@@ -743,6 +733,11 @@ With a prefix ARG always prompt for command to use."
 
 (after! org-latex
   (setq org-latex-pdf-process (list "latexmk -f -xelatex %f")))
+
+(map!
+ [backtab] #'+fold/toggle
+ [C-tab] #'+fold/open-all
+ [C-iso-lefttab] #'+fold/close-all)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
