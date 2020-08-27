@@ -492,7 +492,7 @@ Mark them for deletion by cron job."
   :after org-protocol)
 
 (after! company
-  (map! "M-/" #'company-indent-or-complete-common))
+  (map! "M-/" #'company-complete))
 
 (use-package! company-posframe
   :hook (company-mode . company-posframe-mode))
