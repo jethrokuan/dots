@@ -245,16 +245,15 @@ Mark them for deletion by cron job."
         (find-lisp-find-files jethro/org-agenda-directory "\.org$")))
 
 (setq org-capture-templates
-        `(("i" "inbox" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
-           "* TODO %?")
-          ("e" "email" entry (file+headline ,(concat jethro/org-agenda-directory "emails.org") "Emails")
-               "* TODO [#A] Reply: %a :@home:@office:"
-               :immediate-finish t)
+        `(("i" "Inbox" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
+           ,(concat "* TODO %?\n"
+                    "/Entered on/ %u"))
+          ("e" "Inbox [mail]" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
+           ,(concat "* TODO Process: \"%a\" %?\n"
+                    "/Entered on/ %u"))
           ("c" "org-protocol-capture" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
                "* TODO [[%:link][%:description]]\n\n %i"
-               :immediate-finish t)
-          ("w" "Weekly Review" entry (file+olp+datetree ,(concat jethro/org-agenda-directory "reviews.org"))
-           (file ,(concat jethro/org-agenda-directory "templates/weekly_review.org")))))
+               :immediate-finish t)))
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
