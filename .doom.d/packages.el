@@ -82,3 +82,5 @@
 (package! buttercup)
 (package! citeproc-org)
 (package! org-gcal)
+(package! key-chord
+  :recipe (:host github :repo "emacsorphanage/key-chord"))
