@@ -733,17 +733,6 @@ With a prefix ARG always prompt for command to use."
 (after! org-latex
   (setq org-latex-pdf-process (list "latexmk -f -xelatex %f")))
 
-(use-package! key-chord
-  :hook
-  (after-init . key-chord-mode)
-  :config
-  (key-chord-define org-mode-map "[[" #'jethro/insert-roam-link)
-  (defun jethro/insert-roam-link ()
-    "Inserts an Org-roam link."
-    (interactive)
-    (insert "[[roam:]]")
-    (backward-char 2)))
-
 (map!
  [backtab] #'+fold/toggle
  [C-tab] #'+fold/open-all
