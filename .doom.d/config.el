@@ -448,7 +448,6 @@ Mark them for deletion by cron job."
         :desc "org-roam-insert" "i" #'org-roam-insert
         :desc "org-roam-capture" "c" #'org-roam-capture)
   (setq org-roam-directory (file-truename "~/.org/braindump/org/")
-        org-roam-db-location "/home/jethro/org-roam.db"
         org-roam-db-gc-threshold most-positive-fixnum
         org-roam-graph-exclude-matcher "private"
         org-roam-tag-sources '(prop last-directory)
