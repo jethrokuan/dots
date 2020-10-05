@@ -503,10 +503,13 @@ Mark them for deletion by cron job."
         "<M-right>" #'winner-redo
         "<M-left>" #'winner-undo))
 
+(use-package! ox-hugo
+  :after org)
+
 (after! (org ox-hugo)
   (defun jethro/conditional-hugo-enable ()
     (save-excursion
-      (if (cdr (assoc "SETUPFILE" (org-roam--extract-global-props '("SETUPFILE"))))
+      (if (org-collect-keywords '("SETUPFILE"))
           (org-hugo-auto-export-mode +1)
         (org-hugo-auto-export-mode -1))))
   (add-hook 'org-mode-hook #'jethro/conditional-hugo-enable))
