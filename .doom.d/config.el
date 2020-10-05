@@ -8,6 +8,7 @@
       doom-serif-font (font-spec :family "Libre Baskerville")
       doom-theme 'modus-operandi
       display-line-numbers-type nil
+      load-prefer-newer t
 
       company-idle-delay nil
       lsp-ui-sideline-enable nil
