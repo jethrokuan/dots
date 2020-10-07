@@ -241,20 +241,85 @@ Mark them for deletion by cron job."
     (interactive)
     (org-map-entries 'org-archive-subtree "/DONE" 'file))
   (require 'find-lisp)
-  (setq jethro/org-agenda-directory (file-truename "~/.org/gtd/"))
+  (setq jethro/org-agenda-directory (file-truename "~/.org/"))
   (setq org-agenda-files
         (find-lisp-find-files jethro/org-agenda-directory "\.org$")))
 
+(defun jethro/find-or-create-olp (path &optional this-buffer)
+  "Return a marker pointing to the entry at outline path OLP.
+If anything goes wrong, throw an error, and if you need to do
+something based on this error, you can catch it with
+`condition-case'.
+
+If THIS-BUFFER is set, the outline path does not contain a file,
+only headings."
+  (let* ((file (pop path))
+         (level 1)
+         (lmin 1)
+         (lmax 1)
+         (start (point-min))
+         (end (point-max))
+         found flevel)
+    (unless (derived-mode-p 'org-mode)
+      (error "Buffer %s needs to be in Org mode" buffer))
+    (org-with-wide-buffer
+     (goto-char start)
+     (dolist (heading path)
+       (let ((re (format org-complex-heading-regexp-format
+                         (regexp-quote heading)))
+             (cnt 0))
+         (while (re-search-forward re end t)
+           (setq level (- (match-end 1) (match-beginning 1)))
+           (when (and (>= level lmin) (<= level lmax))
+             (setq found (match-beginning 0) flevel level cnt (1+ cnt))))
+         (when (> cnt 1)
+           (error "Heading not unique on level %d: %s" lmax heading))
+         (when (= cnt 0)
+           ;; Create heading if it doesn't exist
+           (goto-char end)
+           (unless (bolp) (newline))
+           (org-insert-heading nil nil t)
+           (unless (= lmax 1) (org-do-demote))
+           (insert heading)
+           (setq end (point))
+           (goto-char start)
+           (while (re-search-forward re end t)
+             (setq level (- (match-end 1) (match-beginning 1)))
+             (when (and (>= level lmin) (<= level lmax))
+               (setq found (match-beginning 0) flevel level cnt (1+ cnt))))))
+       (goto-char found)
+       (setq lmin (1+ flevel) lmax (+ lmin (if org-odd-levels-only 1 0)))
+       (setq start found
+             end (save-excursion (org-end-of-subtree t t))))
+     (point-marker))))
+
+(defun jethro/olp-current-buffer (&rest outline-path)
+  "Find the OUTLINE-PATH of the current buffer."
+  (let ((m (jethro/find-or-create-olp (cons (buffer-file-name) outline-path))))
+    (set-buffer (marker-buffer m))
+    (org-capture-put-target-region-and-position)
+    (widen)
+    (goto-char m)
+    (set-marker m nil)))
+
 (setq org-capture-templates
-        `(("i" "Inbox" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
+        `(("i" "Inbox" entry (file "~/.org/gtd/inbox.org")
            ,(concat "* TODO %?\n"
                     "/Entered on/ %u"))
-          ("e" "Inbox [mail]" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
+          ("e" "Inbox [mail]" entry (file "~/.org/gtd/inbox.org")
            ,(concat "* TODO Process: \"%a\" %?\n"
                     "/Entered on/ %u"))
-          ("c" "org-protocol-capture" entry (file ,(concat jethro/org-agenda-directory "inbox.org"))
-               "* TODO [[%:link][%:description]]\n\n %i"
-               :immediate-finish t)))
+          ("c" "org-protocol-capture" entry (file "~./.org/gtd/inbox.org")
+           "* TODO [[%:link][%:description]]\n\n %i"
+           :immediate-finish t)
+          ("m" "Metacognition")
+          ("mq" "Questions" entry (function ,(lambda ()
+                                               (jethro/olp-current-buffer "Metacog" "Questions")))
+           ,(concat "* TODO Q: %?\n"
+                    "/Entered on/ %u"))
+          ("mn" "Notes" entry (function ,(lambda ()
+                                           (jethro/olp-current-buffer "Metacog" "Notes")))
+           "* %?\n")))
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
