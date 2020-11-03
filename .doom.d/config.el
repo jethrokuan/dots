@@ -519,19 +519,10 @@ only headings."
         org-id-link-to-org-use-id t)
   :config
   (setq org-roam-capture-templates
-        '(("l" "lit" plain (function org-roam--capture-get-point)
+        '(("d" "default" plain (function org-roam--capture-get-point)
            "%?"
-           :file-name "lit/${slug}"
-           :head "#+setupfile:./hugo_setup.org
-#+hugo_slug: ${slug}
-#+title: ${title}\n"
-           :unnarrowed t)
-          ("c" "concept" plain (function org-roam--capture-get-point)
-           "%?"
-           :file-name "concepts/${slug}"
-           :head "#+setupfile:./hugo_setup.org
-#+hugo_slug: ${slug}
-#+title: ${title}\n"
+           :file-name "${slug}"
+           :head "#+title: ${title}\n"
            :unnarrowed t)
           ("p" "private" plain (function org-roam-capture--get-point)
            "%?"
@@ -541,10 +532,8 @@ only headings."
   (setq org-roam-capture-ref-templates
         '(("r" "ref" plain (function org-roam-capture--get-point)
            "%?"
-           :file-name "lit/${slug}"
-           :head "#+setupfile:./hugo_setup.org
-#+roam_key: ${ref}
-#+hugo_slug: ${slug}
+           :file-name "${slug}"
+           :head "#+roam_key: ${ref}
 #+roam_tags: website
 #+title: ${title}
 
