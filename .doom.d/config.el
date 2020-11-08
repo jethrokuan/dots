@@ -562,14 +562,6 @@ only headings."
 (use-package! ox-hugo
   :after org)
 
-(after! (org ox-hugo)
-  (defun jethro/conditional-hugo-enable ()
-    (save-excursion
-      (if (org-collect-keywords '("SETUPFILE"))
-          (org-hugo-auto-export-mode +1)
-        (org-hugo-auto-export-mode -1))))
-  (add-hook 'org-mode-hook #'jethro/conditional-hugo-enable))
-
 (use-package! org-download
   :commands
   org-download-dnd
