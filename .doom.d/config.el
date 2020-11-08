@@ -541,6 +541,9 @@ only headings."
            :unnarrowed t)))
   (set-company-backend! 'org-mode '(company-capf)))
 
+(after! org-ref
+  (setq org-ref-default-bibliography `,(concat org-directory "braindump/org/biblio.bib")))
+
 (use-package! org-roam-protocol
   :after org-protocol)
 
