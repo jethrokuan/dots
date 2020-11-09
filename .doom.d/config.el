@@ -542,7 +542,7 @@ only headings."
   (set-company-backend! 'org-mode '(company-capf)))
 
 (after! org-ref
-  (setq org-ref-default-bibliography `,(concat org-directory "braindump/org/biblio.bib")))
+  (setq org-ref-default-bibliography `,(list (concat org-directory "braindump/org/biblio.bib"))))
 
 (use-package! org-roam-protocol
   :after org-protocol)
@@ -616,9 +616,9 @@ only headings."
   :init
   (map! "C-x m" #'mathpix-screenshot)
   :config
-  (setq mathpix-screenshot-method "maim -u -s %s"
-        mathpix-app-id (password-store-get "mathpix/app-id")
-        mathpix-app-key (password-store-get "mathpix/app-key")))
+  (setq mathpix-screenshot-method "flameshot gui -p %s"
+        mathpix-app-id (with-temp-buffer (insert-file-contents "./secrets/mathpix-app-id") (buffer-string))
+        mathpix-app-key (with-temp-buffer (insert-file-contents "./secrets/mathpix-app-key") (buffer-string))))
 
 (use-package! anki-editor
   :commands (anki-editor-mode))
