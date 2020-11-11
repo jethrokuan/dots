@@ -511,7 +511,8 @@ only headings."
         :desc "org-roam-find-file" "f" #'org-roam-find-file
         :desc "org-roam-show-graph" "g" #'org-roam-show-graph
         :desc "org-roam-insert" "i" #'org-roam-insert
-        :desc "org-roam-capture" "c" #'org-roam-capture)
+        :desc "org-roam-capture" "c" #'org-roam-capture
+        :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today)
   (setq org-roam-directory (file-truename "~/.org/braindump/org/")
         org-roam-db-gc-threshold most-positive-fixnum
         org-roam-graph-exclude-matcher "private"
@@ -541,6 +542,13 @@ only headings."
 
 - source :: ${ref}"
            :unnarrowed t)))
+  (setq org-roam-dailies-directory "daily/")
+  (setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         #'org-roam-capture--get-point
+         "* %?"
+         :file-name "daily/%<%Y-%m-%d>"
+         :head "#+title: %<%Y-%m-%d>\n\n")))
   (set-company-backend! 'org-mode '(company-capf)))
 
 (after! org-ref
@@ -601,12 +609,6 @@ only headings."
                (cond ((executable-find "maim")  "maim -u -s %s")
                      ((executable-find "scrot") "scrot -s %s")))))
   (setq org-download-method '+org/org-download-method))
-
-(after! org-journal
-  (setq org-journal-date-prefix "#+TITLE: "
-        org-journal-file-format "%Y-%m-%d.org"
-        org-journal-dir (file-truename "~/.org/braindump/org/private/")
-        org-journal-carryover-items nil))
 
 (use-package! citeproc-org
   :after org
