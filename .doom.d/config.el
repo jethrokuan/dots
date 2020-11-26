@@ -241,7 +241,7 @@ Mark them for deletion by cron job."
     (interactive)
     (org-map-entries 'org-archive-subtree "/DONE" 'file))
   (require 'find-lisp)
-  (setq jethro/org-agenda-directory (file-truename "~/.org/"))
+  (setq jethro/org-agenda-directory (file-truename "~/.org/gtd/"))
   (setq org-agenda-files
         (find-lisp-find-files jethro/org-agenda-directory "\.org$")))
 
