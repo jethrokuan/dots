@@ -482,20 +482,20 @@ only headings."
                                                 (org-deadline-warning-days 365)))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "Inbox")
-                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "inbox.org")))))
+                                              (org-agenda-files '(,(expand-file-name "inbox.org" jethro/org-agenda-directory)))))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "Emails")
-                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "emails.org")))))
+                                              (org-agenda-files '(,(expand-file-name "emails.org" jethro/org-agenda-directory)))))
                                        (todo "NEXT"
                                              ((org-agenda-overriding-header "In Progress")
-                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "projects.org")))))
+                                              (org-agenda-files '(,(expand-file-name "projects.org" jethro/org-agenda-directory)))))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "Active Projects")
                                               (org-agenda-skip-function #'jethro/skip-projects)
-                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "projects.org")))))
+                                              (org-agenda-files '(,(expand-file-name "projects.org" jethro/org-agenda-directory)))))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "One-off Tasks")
-                                              (org-agenda-files '(,(concat jethro/org-agenda-directory "next.org")))
+                                              (org-agenda-files '(,(expand-file-name "next.org" jethro/org-agenda-directory)))
                                               (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled)))))))))
 
 (use-package! org-roam
