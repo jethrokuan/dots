@@ -56,7 +56,6 @@
 
     # Apps
     anki
-    spotify
     slack
     tdesktop
     bitwarden
