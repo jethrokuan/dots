@@ -21,3 +21,8 @@ pdfcrop_all() {
 
 eval "$(direnv hook bash)"
 eval "$(starship init bash)"
+export PATH="/home/jethro/.pyenv/bin:$PATH"
+export PATH="/home/jethro/.poetry/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
