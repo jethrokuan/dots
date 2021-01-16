@@ -574,11 +574,6 @@ only headings."
 (use-package! outshine
   :commands (outshine-mode))
 
-(after! ivy
-  (map! :map ivy-minibuffer-map
-        "S-SPC" nil)
-  (add-to-list 'ivy-re-builders-alist '(counsel-projectile-find-file . ivy--regex-plus)))
-
 (after! mixed-pitch
   (dolist (f (-filter (lambda (sym)
                         (s-prefix? "company-" (symbol-name sym)))
