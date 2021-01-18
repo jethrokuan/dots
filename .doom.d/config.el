@@ -290,15 +290,19 @@
 
 (map! :map org-agenda-mode-map
       "i" #'org-agenda-clock-in
+      "I" #'jethro/clock-in-and-advance
       "r" #'jethro/org-process-inbox
       "R" #'org-agenda-refile
       "c" #'jethro/org-inbox-capture)
 
-(defun jethro/set-todo-state-next ()
-  "Visit each parent task and change NEXT states to TODO"
-  (org-todo "NEXT"))
+(defun jethro/advance-todo ()
+  (org-todo 'right)
+  (remove-hook 'org-clock-in-hook #'jethro/advance-todo))
 
-(add-hook 'org-clock-in-hook 'jethro/set-todo-state-next 'append)
+(defun jethro/clock-in-and-advance ()
+  (interactive)
+  (add-hook 'org-clock-in-hook 'jethro/advance-todo)
+  (org-agenda-clock-in))
 
 (use-package! org-clock-convenience
   :bind (:map org-agenda-mode-map
