@@ -2,9 +2,11 @@
 
 (doom! :completion
        company
-       (selectrum +prescient +orderless)
+       ivy
+       ;; (selectrum +prescient +orderless)
 
        :ui
+       hydra
        doom
        doom-dashboard
        hl-todo
@@ -26,7 +28,7 @@
 
        :checkers
        (syntax +childframe)
-       (spell +enchant)
+       spell
 
        :tools
        (debugger +lsp)

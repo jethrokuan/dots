@@ -20,100 +20,32 @@
       org-habit-show-habits-only-for-today t)
 
 (setq search-highlight t
-      search-whitespace-regexp ".*?"
-      isearch-lax-whitespace t
-      isearch-regexp-lax-whitespace nil
-      isearch-lazy-highlight t
-      isearch-lazy-count t
-      lazy-count-prefix-format " (%s/%s) "
-      lazy-count-suffix-format nil
-      isearch-yank-on-move 'shift
-      isearch-allow-scroll 'unlimited)
+      search-whitespace-regexp ".*?")
+
+(use-package! ctrlf
+  :hook
+  (after-init . ctrlf-mode))
 
 (setq direnv-always-show-summary nil)
 
-(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
-
-(after! dired
-  (setq dired-listing-switches "-aBhl  --group-directories-first"
-        dired-dwim-target t
-        dired-recursive-copies (quote always)
-        dired-recursive-deletes (quote top)))
-
 (use-package! dired-narrow
-  :commands (dired-narrow-fuzzy)
-  :init
-  (map! :map dired-mode-map
-        :desc "narrow" "/" #'dired-narrow-fuzzy))
+    :commands (dired-narrow-fuzzy)
+    :init
+    (map! :map dired-mode-map
+          :desc "narrow" "/" #'dired-narrow-fuzzy))
 
-(use-package! deadgrep
-  :if (executable-find "rg")
-  :init
-  (map! "M-s" #'deadgrep))
-
-(use-package! smerge-mode
-  :bind (("C-c h s" . jethro/hydra-smerge/body))
-  :init
-  (defun jethro/enable-smerge-maybe ()
-    "Auto-enable `smerge-mode' when merge conflict is detected."
-    (save-excursion
-      (goto-char (point-min))
-      (when (re-search-forward "^<<<<<<< " nil :noerror)
-        (smerge-mode 1))))
-  (add-hook 'find-file-hook #'jethro/enable-smerge-maybe :append)
-  :config
-  (defhydra jethro/hydra-smerge (:color pink
-                                        :hint nil
-                                        :pre (smerge-mode 1)
-                                        ;; Disable `smerge-mode' when quitting hydra if
-                                        ;; no merge conflicts remain.
-                                        :post (smerge-auto-leave))
-    "
-   ^Move^       ^Keep^               ^Diff^                 ^Other^
-   ^^-----------^^-------------------^^---------------------^^-------
-   _n_ext       _b_ase               _<_: upper/base        _C_ombine
-   _p_rev       _u_pper           g   _=_: upper/lower       _r_esolve
-   ^^           _l_ower              _>_: base/lower        _k_ill current
-   ^^           _a_ll                _R_efine
-   ^^           _RET_: current       _E_diff
-   "
-    ("n" smerge-next)
-    ("p" smerge-prev)
-    ("b" smerge-keep-base)
-    ("u" smerge-keep-upper)
-    ("l" smerge-keep-lower)
-    ("a" smerge-keep-all)
-    ("RET" smerge-keep-current)
-    ("\C-m" smerge-keep-current)
-    ("<" smerge-diff-base-upper)
-    ("=" smerge-diff-upper-lower)
-    (">" smerge-diff-base-lower)
-    ("R" smerge-refine)
-    ("E" smerge-ediff)
-    ("C" smerge-combine-with-next)
-    ("r" smerge-resolve)
-    ("k" smerge-kill-current)
-    ("q" nil "cancel" :color blue)))
-
-(use-package! magit
-  :init
-  (map! "s-g" #'magit-status
-        "C-c g" #'magit-status
-        "s-G" #'magit-blame-addition
-        "C-c G" #'magit-blame-addition)
-  :config
-  (transient-append-suffix 'magit-log "a"
-    '("w" "Wip" magit-wip-log-current))
-  (magit-define-popup-switch 'magit-log-popup
-                             ?m "Omit merge commits" "--no-merges")
-  (transient-append-suffix 'magit-log "-A"
-    '("-m" "Omit merge commits" "--no-merges")))
+(map! "C-c h s" #'+vc/smerge-hydra/body)
 
 (use-package! git-link
-  :commands
-  (git-link git-link-commit git-link-homepage)
-  :custom
-  (git-link-use-commit t))
+    :commands
+    (git-link git-link-commit git-link-homepage)
+    :custom
+    (git-link-use-commit t))
+
+(map! "s-g" #'magit-status
+      "C-c g" #'magit-status
+      "s-G" #'magit-blame-addition
+      "C-c G" #'magit-blame-addition)
 
 (use-package! easy-kill
   :bind*
@@ -135,50 +67,50 @@
         "C-M-)" #'sp-backward-slurp-sexp
         "C-M-)" #'sp-backward-barf-sexp))
 
-(after! org
-  (require 'org-habit)
+(require 'org)
+(require 'org-habit)
 
-  (with-eval-after-load 'flycheck
-    (flycheck-add-mode 'proselint 'org-mode))
+(with-eval-after-load 'flycheck
+  (flycheck-add-mode 'proselint 'org-mode))
 
-  (map! :leader
-        :prefix "n"
-        "c" #'org-capture)
-  (map! :map org-mode-map
-        "M-n" #'outline-next-visible-heading
-        "M-p" #'outline-previous-visible-heading)
-  (setq org-src-window-setup 'current-window
-        org-return-follows-link t
-        org-babel-load-languages '((emacs-lisp . t)
-                                   (python . t)
-                                   (dot . t)
-                                   (R . t))
-        org-confirm-babel-evaluate nil
-        org-use-speed-commands t
-        org-catch-invisible-edits 'show
-        org-preview-latex-image-directory "/tmp/ltximg/"
-        org-structure-template-alist '(("a" . "export ascii")
-                                       ("c" . "center")
-                                       ("C" . "comment")
-                                       ("e" . "example")
-                                       ("E" . "export")
-                                       ("h" . "export html")
-                                       ("l" . "export latex")
-                                       ("q" . "quote")
-                                       ("s" . "src")
-                                       ("v" . "verse")
-                                       ("el" . "src emacs-lisp")
-                                       ("d" . "definition")
-                                       ("t" . "theorem")))
+(map! :leader
+      :prefix "n"
+      "c" #'org-capture)
+(map! :map org-mode-map
+      "M-n" #'outline-next-visible-heading
+      "M-p" #'outline-previous-visible-heading)
+(setq org-src-window-setup 'current-window
+      org-return-follows-link t
+      org-babel-load-languages '((emacs-lisp . t)
+                                 (python . t)
+                                 (dot . t)
+                                 (R . t))
+      org-confirm-babel-evaluate nil
+      org-use-speed-commands t
+      org-catch-invisible-edits 'show
+      org-preview-latex-image-directory "/tmp/ltximg/"
+      org-structure-template-alist '(("a" . "export ascii")
+                                     ("c" . "center")
+                                     ("C" . "comment")
+                                     ("e" . "example")
+                                     ("E" . "export")
+                                     ("h" . "export html")
+                                     ("l" . "export latex")
+                                     ("q" . "quote")
+                                     ("s" . "src")
+                                     ("v" . "verse")
+                                     ("el" . "src emacs-lisp")
+                                     ("d" . "definition")
+                                     ("t" . "theorem")))
 
-  (defun jethro/org-archive-done-tasks ()
-    "Archive all done tasks."
-    (interactive)
-    (org-map-entries 'org-archive-subtree "/DONE" 'file))
-  (require 'find-lisp)
-  (setq jethro/org-agenda-directory (file-truename "~/.org/gtd/"))
-  (setq org-agenda-files
-        (find-lisp-find-files jethro/org-agenda-directory "\.org$")))
+(defun jethro/org-archive-done-tasks ()
+  "Archive all done tasks."
+  (interactive)
+  (org-map-entries 'org-archive-subtree "/DONE" 'file))
+(require 'find-lisp)
+(setq jethro/org-agenda-directory (file-truename "~/.org/gtd/"))
+(setq org-agenda-files
+      (find-lisp-find-files jethro/org-agenda-directory "\.org$"))
 
 (setq org-capture-templates
         `(("i" "Inbox" entry (file ,(expand-file-name "inbox.org" jethro/org-agenda-directory))
@@ -373,28 +305,30 @@
                                               (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled)))))))))
 
 (use-package! org-roam
-  :commands (org-roam-insert org-roam-find-file org-roam-switch-to-buffer org-roam)
-  :hook
-  (after-init . org-roam-mode)
   :init
   (map! :leader
         :prefix "n"
-        :desc "org-roam" "l" #'org-roam
-        :desc "org-roam-insert" "i" #'org-roam-insert
-        :desc "org-roam-switch-to-buffer" "b" #'org-roam-switch-to-buffer
-        :desc "org-roam-find-file" "f" #'org-roam-find-file
+        :desc "org-roam" "l" #'org-roam-buffer
+        :desc "org-roam-node-insert" "i" #'org-roam-node-insert
+        :desc "org-roam-node-find" "f" #'org-roam-node-find
+        :desc "org-roam-ref-find" "r" #'org-roam-ref-find
         :desc "org-roam-show-graph" "g" #'org-roam-show-graph
-        :desc "org-roam-insert" "i" #'org-roam-insert
         :desc "org-roam-capture" "c" #'org-roam-capture
         :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today)
   (setq org-roam-directory (file-truename "~/.org/braindump/org/")
         org-roam-db-gc-threshold most-positive-fixnum
-        org-roam-graph-exclude-matcher "private"
-        org-roam-tag-sources '(prop last-directory)
         org-id-link-to-org-use-id t)
   :config
+  (org-roam-setup)
+  (require 'org-roam-backlinks)
+  (require 'org-roam-reflinks)
+  (require 'org-roam-unlinked-references)
+  (setq org-roam-mode-sections
+        (list #'org-roam-backlinks-insert-section
+              #'org-roam-reflinks-insert-section
+              #'org-roam-unlinked-references-insert-section))
   (setq org-roam-capture-templates
-        '(("d" "default" plain (function org-roam--capture-get-point)
+        '(("d" "default" plain (function org-roam-capture--get-point)
            "%?"
            :file-name "${slug}"
            :head "#+title: ${title}\n"
@@ -532,30 +466,6 @@
                       (face-list)))
     (pushnew! mixed-pitch-fixed-pitch-faces f)))
 
-(use-package! org-roam-bibtex
-  :after (org-roam)
-  :hook (org-roam-mode . org-roam-bibtex-mode)
-  :config
-  (setq org-roam-bibtex-preformat-keywords
-   '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
-  (setq orb-templates
-        `(("r" "ref" plain (function org-roam-capture--get-point)
-           ""
-           :file-name "lit/${slug}"
-           :head ,(concat
-                   "#+setupfile: ./hugo_setup.org\n"
-                   "#+title: ${=key=}: ${title}\n"
-                   "#+roam_key: ${ref}\n\n"
-                   "* ${title}\n"
-                   "  :PROPERTIES:\n"
-                   "  :Custom_ID: ${=key=}\n"
-                   "  :URL: ${url}\n"
-                   "  :AUTHOR: ${author-or-editor}\n"
-                   "  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-                   "  :NOTER_PAGE: \n"
-                   "  :END:\n")
-           :unnarrowed t))))
-
 (use-package! bibtex-completion
   :config
   (setq bibtex-completion-notes-path "~/.org/braindump/org/"
@@ -588,7 +498,7 @@
 (use-package! yaml-mode
   :mode ("\\.yml\\'" . yaml-mode))
 
-(use-package! org-roam-server)
+;; (use-package! org-roam-server)
 
 (use-package! emmet-mode
   :hook
@@ -615,59 +525,6 @@ With a prefix ARG always prompt for command to use."
 
 (map! "C-c o o" 'jethro/open-with)
 
-(use-package! org-gcal
-  :commands (org-gcal-sync)
-  :config
-  (setq org-gcal-client-id (password-store-get "gmail/org-gcal-client")
-        org-gcal-client-secret (password-store-get "gmail/org-gcal-secret")
-        org-gcal-file-alist `(("dckbhpq9bq13m03llerl09slgo@group.calendar.google.com" . ,(concat jethro/org-agenda-directory "calendars/lab.org"))
-                              ("jethrokuan95@gmail.com" . ,(concat jethro/org-agenda-directory "calendars/personal.org")))))
-
-(use-package prog-mode
-  :config
-  (add-hook 'prog-mode-hook 'outline-minor-mode)
-  (add-hook 'prog-mode-hook 'hs-minor-mode))
-
-(defun jethro/ledger-cleanup-csv ()
-  (save-excursion
-    (goto-char (point-min))
-    (while (search-forward "\n" nil t)
-      (beginning-of-line)
-      (delete-horizontal-space)
-      (end-of-line)
-      (delete-horizontal-space)
-      (when (string-equal (buffer-substring-no-properties (line-beginning-position) (line-end-position))
-                          "")
-        (delete-char -1)))))
-
-(defun jethro/ledger-import-sc (file)
-  (interactive "f")
-  (let* ((cleaned-content (with-temp-buffer
-                            (insert-file-contents file)
-                            (jethro/ledger-cleanup-csv)
-                            (buffer-string)))
-         (lines (split-string cleaned-content "\n"))
-         (account (completing-read "account: " (ledger-accounts-list-in-buffer))))
-    (save-match-data
-      (dolist (line lines)
-        (let* ((items (split-string line ","))
-               (date-maybe (car items)))
-          (when (string-match "\\([0-9][0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9][0-9][0-9]\\)" date-maybe)
-            (pcase-let ((`(_ ,info ,foreign ,sgd) items))
-              (let ((date (format "%s/%s/%s" ;YYYY/MM/DD
-                                  (match-string 3 date-maybe)
-                                  (match-string 2 date-maybe)
-                                  (match-string 1 date-maybe))))
-                (when (string-match "SGD \\(.*\\) \\(DR\\|CR\\)" sgd)
-                  (let ((cr-p (string-equal (match-string 2 sgd) "CR"))
-                        (value (match-string 1 sgd)))
-                    (insert date
-                            " * " info "\n"
-                            "    " account
-                            "   " (if cr-p "-" "") "S$" value "\n"
-                            "    " (completing-read info (ledger-accounts-list-in-buffer))
-                            "\n\n\n")))))))))))
-
 (after! org-latex
   (setq org-latex-pdf-process (list "latexmk -f -xelatex %f")))
 
@@ -675,23 +532,3 @@ With a prefix ARG always prompt for command to use."
  [backtab] #'+fold/toggle
  [C-tab] #'+fold/open-all
  [C-iso-lefttab] #'+fold/close-all)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(fci-rule-color "#544863")
- '(git-link-use-commit t t)
- '(jdee-db-active-breakpoint-face-colors (cons "#222228" "#40B4C4"))
- '(jdee-db-requested-breakpoint-face-colors (cons "#222228" "#74DFC4"))
- '(jdee-db-spec-breakpoint-face-colors (cons "#222228" "#4E415C"))
- '(objed-cursor-color "#964C7B")
- '(pdf-view-midnight-colors (cons "#FFFFFF" "#27212E"))
- '(rustic-ansi-faces
-   ["#27212E" "#964C7B" "#74DFC4" "#FFE261" "#40B4C4" "#EB64B9" "#B4DCE7" "#FFFFFF"])
- '(safe-local-variable-values
-   '((eval require 'org-roam-dev)
-     (eval jethro/conditional-hugo-enable)
-     (org-src-preserve-indentation)
-     (eval require 'ol-info))))
