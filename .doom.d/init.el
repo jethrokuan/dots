@@ -13,7 +13,7 @@
        modeline
        nav-flash
        ophints
-       (popup +all +defaults)
+       ;; (popup +all +defaults)
        vc-gutter
 
        :editor
