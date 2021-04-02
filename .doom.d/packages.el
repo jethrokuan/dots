@@ -6,7 +6,7 @@
 (package! org-clock-convenience)
 (package! company-posframe)
 (package! org-roam
-  :recipe (:host github :repo "org-roam/org-roam"))
+  :recipe (:host github :repo "org-roam/org-roam" :branch "v2"))
 ;; (package! org-roam-bibtex
 ;;   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! mathpix.el
