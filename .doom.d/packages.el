@@ -7,8 +7,8 @@
 (package! company-posframe)
 (package! org-roam
   :recipe (:host github :repo "org-roam/org-roam"))
-(package! org-roam-bibtex
-  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+;; (package! org-roam-bibtex
+;;   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 (package! anki-editor)
@@ -25,7 +25,6 @@
   :recipe (:type git :repo "https://depp.brause.cc/nov.el.git"))
 (package! git-link)
 (package! yaml-mode)
-(package! org-roam-server
-  :recipe (:host github :repo "org-roam/org-roam-server"))
 (package! emmet-mode)
 (package! citeproc-org)
+(package! orderless)

@@ -22,6 +22,11 @@
 (setq search-highlight t
       search-whitespace-regexp ".*?")
 
+(use-package! orderless
+  :config
+  (after! ivy
+    (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))))
+
 (use-package! ctrlf
   :hook
   (after-init . ctrlf-mode))
@@ -308,7 +313,7 @@
   :init
   (map! :leader
         :prefix "n"
-        :desc "org-roam" "l" #'org-roam-buffer
+        :desc "org-roam" "l" #'org-roam-buffer-toggle
         :desc "org-roam-node-insert" "i" #'org-roam-node-insert
         :desc "org-roam-node-find" "f" #'org-roam-node-find
         :desc "org-roam-ref-find" "r" #'org-roam-ref-find
@@ -318,15 +323,19 @@
   (setq org-roam-directory (file-truename "~/.org/braindump/org/")
         org-roam-db-gc-threshold most-positive-fixnum
         org-id-link-to-org-use-id t)
+  (add-to-list 'display-buffer-alist
+               '(("\\*org-roam\\*"
+                  (display-buffer-in-direction)
+                  (direction . right)
+                  (window-width . 0.33)
+                  (window-height . fit-window-to-buffer))))
   :config
-  (org-roam-setup)
-  (require 'org-roam-backlinks)
-  (require 'org-roam-reflinks)
-  (require 'org-roam-unlinked-references)
   (setq org-roam-mode-sections
         (list #'org-roam-backlinks-insert-section
               #'org-roam-reflinks-insert-section
-              #'org-roam-unlinked-references-insert-section))
+              ;; #'org-roam-unlinked-references-insert-section
+              ))
+  (org-roam-setup)
   (setq org-roam-capture-templates
         '(("d" "default" plain (function org-roam-capture--get-point)
            "%?"
