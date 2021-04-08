@@ -413,7 +413,7 @@
         "s-Y" #'org-download-screenshot
         "s-y" #'org-download-yank)
   (pushnew! dnd-protocol-alist
-            '("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . +org-dragndrop-download-dnd-fn)
+            '("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . org-download-dnd)
             '("^data:" . org-download-dnd-base64))
   (advice-add #'org-download-enable :override #'ignore)
   :config
@@ -425,13 +425,9 @@
            ;; Create folder name with current buffer name, and place in root dir
            (dirname (concat "./images/"
                             (replace-regexp-in-string " " "_"
-                                                      (downcase (file-name-base buffer-file-name)))))
-           (filename-with-timestamp (format "%s%s.%s"
-                                            (file-name-sans-extension filename)
-                                            (format-time-string org-download-timestamp)
-                                            (file-name-extension filename))))
+                                                      (downcase (file-name-base buffer-file-name))))))
       (make-directory dirname t)
-      (expand-file-name filename-with-timestamp dirname)))
+      (expand-file-name filename dirname)))
   :config
   (setq org-download-screenshot-method
         (cond (IS-MAC "screencapture -i %s")
