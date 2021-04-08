@@ -339,13 +339,7 @@
   (setq org-roam-capture-templates
         '(("d" "default" plain (function org-roam-capture--get-point)
            "%?"
-           :file-name "${slug}"
-           :head "#+title: ${title}\n"
-           :immediate-finish t
-           :unnarrowed t)
-          ("p" "private" plain (function org-roam-capture--get-point)
-           "%?"
-           :file-name "private/${slug}"
+           :file-name "${slug}.org"
            :head "#+title: ${title}\n"
            :immediate-finish t
            :unnarrowed t)))
@@ -377,7 +371,7 @@
       '(("d" "default" entry
          #'org-roam-capture--get-point
          "* %?"
-         :file-name "daily/%<%Y-%m-%d>"
+         :file-name "daily/%<%Y-%m-%d>.org"
          :head "#+title: %<%Y-%m-%d>\n\n")))
   (set-company-backend! 'org-mode '(company-capf)))
 
