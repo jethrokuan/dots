@@ -47,7 +47,7 @@
        markdown
        nix
        (org +noter)
-       python
+       (python +lsp +pyright)
        rest
        (rust +lsp)
        sh
