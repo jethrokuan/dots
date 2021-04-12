@@ -340,17 +340,18 @@
         '((:key "d"
            :desc "default"
            :body ""
-           :file-path "${slug}.org"
-           :head "#+title: ${title}\n"
+           :if-new (file+head "${slug}.org"
+                              "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)))
   (setq org-roam-capture-ref-templates
         '((:key "r"
            :desc "ref"
            :body "%?"
-           :file-name "${slug}.org"
-           :head "#+title: ${title}\n"
+           :if-new (file+head "${slug}.org"
+                              "#+title: ${title}\n")
            :unnarrowed t)))
+
   (add-to-list 'org-capture-templates `("c" "org-protocol-capture" entry (file+olp ,(expand-file-name "reading_and_writing_inbox.org" org-roam-directory) "The List")
                                          "* TO-READ [[%:link][%:description]] %^g"
                                          :immediate-finish t))
@@ -369,8 +370,8 @@
         '((:key "d"
            :desc "default"
            :body "* %?"
-           :file-name "daily/%<%Y-%m-%d>.org"
-           :head "#+title: %<%Y-%m-%d>\n\n")))
+           :if-new (file+head "daily/%<%Y-%m-%d>.org"
+                              "#+title: %<%Y-%m-%d>\n"))))
   (set-company-backend! 'org-mode '(company-capf)))
 
 (after! org-ref
