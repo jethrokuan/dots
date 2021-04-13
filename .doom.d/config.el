@@ -337,17 +337,15 @@
               ))
   (org-roam-setup)
   (setq org-roam-capture-templates
-        '((:key "d"
-           :desc "default"
-           :body ""
+        '(("d" "default" plain
+           "%?"
            :if-new (file+head "${slug}.org"
                               "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)))
   (setq org-roam-capture-ref-templates
-        '((:key "r"
-           :desc "ref"
-           :body "%?"
+        '(("r" "ref" plain
+           "%?"
            :if-new (file+head "${slug}.org"
                               "#+title: ${title}\n")
            :unnarrowed t)))
@@ -367,9 +365,8 @@
                                                      (org-agenda-files '(,(expand-file-name "reading_and_writing_inbox.org" org-roam-directory))))))))
   (setq org-roam-dailies-directory "daily/")
   (setq org-roam-dailies-capture-templates
-        '((:key "d"
-           :desc "default"
-           :body "* %?"
+        '(("d" "default" entry
+           "* %?"
            :if-new (file+head "daily/%<%Y-%m-%d>.org"
                               "#+title: %<%Y-%m-%d>\n"))))
   (set-company-backend! 'org-mode '(company-capf)))
