@@ -31,6 +31,7 @@
        spell
 
        :tools
+       gist
        (debugger +lsp)
        direnv
        (eval +overlay)
