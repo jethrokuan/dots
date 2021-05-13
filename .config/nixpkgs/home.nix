@@ -38,7 +38,6 @@
     tree
     rsync
     ripgrep
-    starship
     wget
     xclip
     xdg_utils
@@ -46,7 +45,6 @@
     fd
     file
     fzf
-    gitAndTools.gitFull
     sshfs
 
     # Emacs-related tooling
@@ -55,7 +53,6 @@
     graphviz
 
     # Apps
-    anki
     slack
     tdesktop
     bitwarden
@@ -66,15 +63,12 @@
 
     # Screencasting
     simplescreenrecorder
-    gifsicle
     scrot
     imagemagick
-    kdenlive
 
     # Emacs
     ripgrep
     coreutils
-    fd
     clang
     texlive.combined.scheme-full
     zotero
@@ -97,6 +91,26 @@
   programs.emacs = {
     enable = true;
     package = pkgs.emacsGcc;
+  };
+
+  programs.starship = {
+    enable = true;
+    enableBashIntegration = true;
+    enableZshIntegration = false;
+    enableFishIntegration = false;
+  };
+
+  programs.git = {
+    enable = true;
+    userName = "Jethro Kuan";
+    userEmail = "jethrokuan95@gmail.com";
+  };
+
+  programs.bash = {
+    enable = true;
+    shellAliases = {
+      "p2x1" = "pdfnup --nup 2x1 --landscape --suffix '2x1' --batch ";
+    };
   };
   
   services.emacs.enable = true;
