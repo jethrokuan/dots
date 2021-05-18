@@ -395,40 +395,6 @@
 (use-package! ox-hugo
   :after org)
 
-(use-package! org-download
-  :commands
-  org-download-dnd
-  org-download-yank
-  org-download-screenshot
-  org-download-dnd-base64
-  :init
-  (map! :map org-mode-map
-        "s-Y" #'org-download-screenshot
-        "s-y" #'org-download-yank)
-  (pushnew! dnd-protocol-alist
-            '("^\\(?:https?\\|ftp\\|file\\|nfs\\):" . org-download-dnd)
-            '("^data:" . org-download-dnd-base64))
-  (advice-add #'org-download-enable :override #'ignore)
-  :config
-  (defun +org/org-download-method (link)
-    (let* ((filename
-            (file-name-nondirectory
-             (car (url-path-and-query
-                   (url-generic-parse-url link)))))
-           ;; Create folder name with current buffer name, and place in root dir
-           (dirname (concat "./images/"
-                            (replace-regexp-in-string " " "_"
-                                                      (downcase (file-name-base buffer-file-name))))))
-      (make-directory dirname t)
-      (expand-file-name filename dirname)))
-  :config
-  (setq org-download-screenshot-method
-        (cond (IS-MAC "screencapture -i %s")
-              (IS-LINUX
-               (cond ((executable-find "maim")  "maim -u -s %s")
-                     ((executable-find "scrot") "scrot -s %s")))))
-  (setq org-download-method '+org/org-download-method))
-
 (use-package! citeproc-org
   :after org
   :config

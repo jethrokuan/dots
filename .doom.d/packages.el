@@ -16,7 +16,6 @@
   :recipe (:host gitlab :repo "ambrevar/emacs-gif-screencast"))
 (package! modus-operandi-theme)
 (package! outshine)
-(package! org-download)
 (package! ox-hugo
   :recipe (:host github :repo "jethrokuan/ox-hugo"))
 (package! ox-texinfo+
