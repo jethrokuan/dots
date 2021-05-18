@@ -38,7 +38,6 @@
        (lookup +docsets +dictionary)
        (lsp +peek)
        (magit +forge)
-       pdf
        upload
 
        :lang
