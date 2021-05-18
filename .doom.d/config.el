@@ -75,6 +75,9 @@
 (require 'org)
 (require 'org-habit)
 
+(after! org
+  (setq org-attach-dir-relative t))
+
 (with-eval-after-load 'flycheck
   (flycheck-add-mode 'proselint 'org-mode))
 
