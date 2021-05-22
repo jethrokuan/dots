@@ -27,3 +27,4 @@
 (package! emmet-mode)
 (package! citeproc-org)
 (package! orderless)
+(package! corfu)

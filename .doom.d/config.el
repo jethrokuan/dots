@@ -22,7 +22,17 @@
 (setq search-highlight t
       search-whitespace-regexp ".*?")
 
+(use-package! corfu
+  :bind
+  ("M-/" . #'completion-at-point)
+  :config
+  (corfu-global-mode))
+
 (use-package! orderless
+  :init
+  (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion)))))
   :config
   (after! ivy
     (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))))
@@ -30,8 +40,6 @@
 (use-package! ctrlf
   :hook
   (after-init . ctrlf-mode))
-
-(setq direnv-always-show-summary nil)
 
 (use-package! dired-narrow
     :commands (dired-narrow-fuzzy)
@@ -372,7 +380,8 @@
            "* %?"
            :if-new (file+head "daily/%<%Y-%m-%d>.org"
                               "#+title: %<%Y-%m-%d>\n"))))
-  (set-company-backend! 'org-mode '(company-capf)))
+  ;; (set-company-backend! 'org-mode '(company-capf))
+  )
 
 (after! org-ref
   (setq org-ref-default-bibliography `,(list (concat org-directory "braindump/org/biblio.bib"))))
@@ -380,8 +389,8 @@
 (use-package! org-roam-protocol
   :after org-protocol)
 
-(after! company
-  (map! "M-/" #'company-complete))
+;; (after! company
+;;   (map! "M-/" #'company-complete))
 
 (use-package! company-posframe
   :hook (company-mode . company-posframe-mode))
