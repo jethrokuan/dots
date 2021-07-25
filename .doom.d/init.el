@@ -2,7 +2,7 @@
 
 (doom! :completion
        ;; company
-       ivy
+       vertico
        ;; (selectrum +prescient +orderless)
 
        :ui

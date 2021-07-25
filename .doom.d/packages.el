@@ -6,7 +6,7 @@
 (package! org-clock-convenience)
 (package! company-posframe)
 (package! org-roam
-  :recipe (:host github :repo "org-roam/org-roam" :branch "v2"))
+  :recipe (:host github :repo "org-roam/org-roam"))
 ;; (package! org-roam-bibtex
 ;;   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! mathpix.el
@@ -14,7 +14,7 @@
 (package! anki-editor)
 (package! gif-screencast
   :recipe (:host gitlab :repo "ambrevar/emacs-gif-screencast"))
-(package! modus-operandi-theme)
+(package! modus-themes)
 (package! outshine)
 (package! ox-hugo
   :recipe (:host github :repo "jethrokuan/ox-hugo"))
@@ -26,5 +26,6 @@
 (package! yaml-mode)
 (package! emmet-mode)
 (package! citeproc-org)
-(package! orderless)
 (package! corfu)
+(package! dash)
+(package! simple-httpd)

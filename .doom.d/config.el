@@ -14,6 +14,21 @@
       lsp-ui-sideline-enable nil
       lsp-enable-symbol-highlighting nil)
 
+(use-package modus-themes
+  :ensure
+  :init
+  ;; Add all your customizations prior to loading the themes
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil
+        modus-themes-completions 'opinionated
+        modus-themes-region '(bg-only no-extend))
+
+  ;; Load the theme files before enabling a theme
+  (modus-themes-load-themes)
+  :config
+  (modus-themes-load-operandi)
+  :bind ("<f5>" . modus-themes-toggle))
+
 (setq org-directory "~/.org/"
       org-ellipsis " ▼ "
       org-adapt-indentation nil
@@ -27,15 +42,6 @@
   ("M-/" . #'completion-at-point)
   :config
   (corfu-global-mode))
-
-(use-package! orderless
-  :init
-  (setq completion-styles '(orderless)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles . (partial-completion)))))
-  :config
-  (after! ivy
-    (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))))
 
 (use-package! ctrlf
   :hook
@@ -322,6 +328,7 @@
 
 (use-package! org-roam
   :init
+  (setq org-roam-v2-ack t)
   (map! :leader
         :prefix "n"
         :desc "org-roam" "l" #'org-roam-buffer-toggle
@@ -378,7 +385,7 @@
   (setq org-roam-dailies-capture-templates
         '(("d" "default" entry
            "* %?"
-           :if-new (file+head "daily/%<%Y-%m-%d>.org"
+           :if-new (file+head "%<%Y-%m-%d>.org"
                               "#+title: %<%Y-%m-%d>\n"))))
   ;; (set-company-backend! 'org-mode '(company-capf))
   )
