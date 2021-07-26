@@ -1,20 +1,21 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
 (doom! :completion
-       ;; company
+       company
        vertico
-       ;; (selectrum +prescient +orderless)
 
        :ui
        hydra
        doom
        doom-dashboard
        hl-todo
+       indent-guides
        modeline
        nav-flash
        ophints
-       ;; (popup +all +defaults)
+       (popup +all +defaults)
        vc-gutter
+       zen
 
        :editor
        fold

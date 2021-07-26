@@ -26,6 +26,5 @@
 (package! yaml-mode)
 (package! emmet-mode)
 (package! citeproc-org)
-(package! corfu)
 (package! dash)
 (package! simple-httpd)

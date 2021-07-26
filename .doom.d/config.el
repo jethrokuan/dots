@@ -4,11 +4,13 @@
       user-mail-address "jethrokuan95@gmail.com"
       doom-scratch-intial-major-mode 'lisp-interaction-mode
       doom-font (font-spec :family "Roboto Mono" :size 15)
-      doom-variable-pitch-font (font-spec :family "Libre Baskerville")
+      doom-variable-pitch-font (font-spec :family "Roboto")
       doom-serif-font (font-spec :family "Libre Baskerville")
       doom-theme 'modus-operandi
       display-line-numbers-type nil
       load-prefer-newer t
+      +zen-text-scale 1
+      writeroom-extra-line-spacing 0.3
 
       company-idle-delay nil
       lsp-ui-sideline-enable nil
@@ -19,8 +21,17 @@
   :init
   ;; Add all your customizations prior to loading the themes
   (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs nil
         modus-themes-completions 'opinionated
+        modus-themes-variable-pitch-headings t
+        modus-themes-scale-headings t
+        modus-themes-variable-pitch-ui t
+        modus-themes-org-agenda
+        '((header-block . (variable-pitch scale-title))
+          (header-date . (grayscale bold-all)))
+        modus-themes-org-blocks
+        '(grayscale)
+        modus-themes-mode-line
+        '(borderless)
         modus-themes-region '(bg-only no-extend))
 
   ;; Load the theme files before enabling a theme
@@ -36,12 +47,6 @@
 
 (setq search-highlight t
       search-whitespace-regexp ".*?")
-
-(use-package! corfu
-  :bind
-  ("M-/" . #'completion-at-point)
-  :config
-  (corfu-global-mode))
 
 (use-package! ctrlf
   :hook
@@ -341,12 +346,6 @@
   (setq org-roam-directory (file-truename "~/.org/braindump/org/")
         org-roam-db-gc-threshold most-positive-fixnum
         org-id-link-to-org-use-id t)
-  (add-to-list 'display-buffer-alist
-               '(("\\*org-roam\\*"
-                  (display-buffer-in-direction)
-                  (direction . right)
-                  (window-width . 0.33)
-                  (window-height . fit-window-to-buffer))))
   :config
   (setq org-roam-mode-sections
         (list #'org-roam-backlinks-insert-section
@@ -354,6 +353,13 @@
               ;; #'org-roam-unlinked-references-insert-section
               ))
   (org-roam-setup)
+  (set-popup-rules!
+    `((,(regexp-quote org-roam-buffer) ; persistent org-roam buffer
+       :side right :width .33 :height .5 :ttl nil :modeline nil :quit nil :slot 1)
+      ("^\\*org-roam: " ; node dedicated org-roam buffer
+       :side right :width .33 :height .5 :ttl nil :modeline nil :quit nil :slot 2)))
+
+  (add-hook 'org-roam-mode-hook #'turn-on-visual-line-mode)
   (setq org-roam-capture-templates
         '(("d" "default" plain
            "%?"
@@ -387,8 +393,7 @@
            "* %?"
            :if-new (file+head "%<%Y-%m-%d>.org"
                               "#+title: %<%Y-%m-%d>\n"))))
-  ;; (set-company-backend! 'org-mode '(company-capf))
-  )
+  (set-company-backend! 'org-mode '(company-capf)))
 
 (after! org-ref
   (setq org-ref-default-bibliography `,(list (concat org-directory "braindump/org/biblio.bib"))))
