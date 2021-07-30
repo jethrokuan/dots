@@ -11,9 +11,6 @@
 ;;   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
-(package! anki-editor)
-(package! gif-screencast
-  :recipe (:host gitlab :repo "ambrevar/emacs-gif-screencast"))
 (package! modus-themes)
 (package! outshine)
 (package! ox-hugo
@@ -28,3 +25,4 @@
 (package! citeproc-org)
 (package! dash)
 (package! simple-httpd)
+(package! org-present)

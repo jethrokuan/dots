@@ -401,17 +401,11 @@
 (use-package! org-roam-protocol
   :after org-protocol)
 
-;; (after! company
-;;   (map! "M-/" #'company-complete))
+(after! company
+  (map! "M-/" #'company-complete))
 
 (use-package! company-posframe
   :hook (company-mode . company-posframe-mode))
-
-(after! (org-roam)
-  (winner-mode +1)
-  (map! :map winner-mode-map
-        "<M-right>" #'winner-redo
-        "<M-left>" #'winner-undo))
 
 (use-package! ox-hugo
   :after org)
@@ -430,13 +424,6 @@
         mathpix-app-id (with-temp-buffer (insert-file-contents "./secrets/mathpix-app-id") (buffer-string))
         mathpix-app-key (with-temp-buffer (insert-file-contents "./secrets/mathpix-app-key") (buffer-string))))
 
-(use-package! anki-editor
-  :commands (anki-editor-mode))
-
-(use-package! gif-screencast
-  :bind
-  ("<f12>" . gif-screencast-start-or-stop))
-
 (defun insert-date ()
   "Insert a timestamp according to locale's date and time format."
   (interactive)
@@ -444,12 +431,6 @@
 
 (use-package! outshine
   :commands (outshine-mode))
-
-(after! mixed-pitch
-  (dolist (f (-filter (lambda (sym)
-                        (s-prefix? "company-" (symbol-name sym)))
-                      (face-list)))
-    (pushnew! mixed-pitch-fixed-pitch-faces f)))
 
 (use-package! bibtex-completion
   :config
@@ -517,3 +498,73 @@ With a prefix ARG always prompt for command to use."
  [backtab] #'+fold/toggle
  [C-tab] #'+fold/open-all
  [C-iso-lefttab] #'+fold/close-all)
+
+(use-package! org-present
+  :after org
+  :bind (:map org-present-mode-keymap
+         ("C-c C-j" . jethro/org-present-next)
+         ("C-c C-k" . jethro/org-present-prev)
+         ("n" . jethro/org-present-next)
+         ("p" . jethro/org-present-prev)
+         ("q" . org-present-quit)
+         :map org-mode-map
+         ("<f10>" . org-present))
+  :hook ((org-present-mode . jethro/org-present-hook)
+         (org-present-mode-quit . jethro/org-present-quit-hook))
+  :config
+  (defun jethro/org-present-prepare-slide ()
+    (org-overview)
+    (org-show-entry)
+    (org-show-children))
+
+  (defun jethro/org-present-hook ()
+    (setq header-line-format " ")
+    (doom/increase-font-size 2)
+    (org-present-read-only)
+    (hide-mode-line-mode +1)
+    (org-display-inline-images)
+    (jethro/org-hide-properties)
+    (jethro/org-present-prepare-slide))
+
+  (defun jethro/org-present-quit-hook ()
+    (setq-local face-remapping-alist '((default variable-pitch default)))
+    (doom/reset-font-size)
+    (setq header-line-format nil)
+    (org-present-small)
+    (org-present-read-write)
+    (jethro/org-show-properties))
+
+  (defun jethro/org-present-prev ()
+    (interactive)
+    (org-present-prev)
+    (jethro/org-present-prepare-slide))
+
+  (defun jethro/org-present-next ()
+    (interactive)
+    (org-present-next)
+    (jethro/org-present-prepare-slide))
+
+  (defun jethro/org-hide-properties ()
+    "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward
+              "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+        (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
+          (overlay-put ov_this 'display "")
+          (overlay-put ov_this 'hidden-prop-drawer t))))
+    (put 'org-toggle-properties-hide-state 'state 'hidden))
+
+  (defun jethro/org-show-properties ()
+    "Show all org-mode property drawers hidden by org-hide-properties."
+    (interactive)
+    (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
+    (put 'org-toggle-properties-hide-state 'state 'shown))
+
+  (defun jethro/org-toggle-properties ()
+    "Toggle visibility of property drawers."
+    (interactive)
+    (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
+        (org-show-properties)
+      (org-hide-properties))))
