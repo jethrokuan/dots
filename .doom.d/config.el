@@ -2,8 +2,8 @@
 
 (setq user-full-name "Jethro Kuan"
       user-mail-address "jethrokuan95@gmail.com"
-      doom-scratch-intial-major-mode 'lisp-interaction-mode
-      doom-font (font-spec :family "Roboto Mono" :size 15)
+      doom-scratch-initial-major-mode 'lisp-interaction-mode
+      doom-font (font-spec :family "Iosevka" :size 15)
       doom-variable-pitch-font (font-spec :family "Roboto" :size 16)
       doom-serif-font (font-spec :family "Libre Baskerville")
       doom-theme 'modus-operandi
