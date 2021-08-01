@@ -47,7 +47,7 @@
        (latex +latexmk)
        markdown
        nix
-       (org +noter +dnd)
+       (org +noter +dnd +present)
        (python +lsp +pyright)
        rest
        (rust +lsp)

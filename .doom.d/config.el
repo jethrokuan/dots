@@ -395,6 +395,14 @@
                               "#+title: %<%Y-%m-%d>\n"))))
   (set-company-backend! 'org-mode '(company-capf)))
 
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam
+    :commands (org-roam-ui-mode))
+
+
 (after! org-ref
   (setq org-ref-default-bibliography `,(list (concat org-directory "braindump/org/biblio.bib"))))
 
@@ -521,6 +529,7 @@ With a prefix ARG always prompt for command to use."
     (setq header-line-format " ")
     (doom/increase-font-size 2)
     (org-present-read-only)
+    (org-latex-preview '(16))
     (hide-mode-line-mode +1)
     (org-display-inline-images)
     (jethro/org-hide-properties)
