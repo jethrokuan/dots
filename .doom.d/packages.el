@@ -13,8 +13,7 @@
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 (package! modus-themes)
 (package! outshine)
-(package! ox-hugo
-  :recipe (:host github :repo "jethrokuan/ox-hugo"))
+(package! ox-hugo)
 (package! ox-texinfo+
   :recipe (:host github :repo "tarsius/ox-texinfo-plus"))
 (package! nov
