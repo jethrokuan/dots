@@ -53,6 +53,7 @@
        (rust +lsp)
        sh
        web
+       (javascript +lsp)
 
        :config
        (default +bindings +smartparens))
