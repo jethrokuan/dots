@@ -100,12 +100,10 @@
 (with-eval-after-load 'flycheck
   (flycheck-add-mode 'proselint 'org-mode))
 
-(map! :leader
-      :prefix "n"
-      "c" #'org-capture)
 (map! :map org-mode-map
       "M-n" #'outline-next-visible-heading
       "M-p" #'outline-previous-visible-heading)
+
 (setq org-src-window-setup 'current-window
       org-return-follows-link t
       org-babel-load-languages '((emacs-lisp . t)
@@ -135,14 +133,43 @@
   (interactive)
   (org-map-entries 'org-archive-subtree "/DONE" 'file))
 (require 'find-lisp)
+
 (setq jethro/org-agenda-directory (file-truename "~/.org/gtd/"))
 (setq org-agenda-files
       (find-lisp-find-files jethro/org-agenda-directory "\.org$"))
 
 (setq org-capture-templates
-        `(("i" "Inbox" entry (file ,(expand-file-name "inbox.org" jethro/org-agenda-directory))
-           ,(concat "* TODO %?\n"
-                    "/Entered on/ %u"))))
+      `(("i" "Inbox" entry  (file "gtd/inbox.org")
+        ,(concat "* TODO %?\n"
+                 "/Entered on/ %U"))
+        ("c" "Org-protocol capture" entry  (file "gtd/inbox.org")
+        ,(concat "* TODO %a\n"
+                 "/Entered on/ %U")
+        :immediate-finish t)
+        ("@" "Inbox [mu4e]" entry (file "gtd/inbox.org")
+        ,(concat "* TODO Reply to \"%a\" %?\n"
+                 "/Entered on/ %U"))))
+
+(after! mu4e
+  (setq sendmail-program (executable-find "msmtp")
+        send-mail-function #'smtpmail-send-it
+        message-sendmail-f-is-evil t
+        message-sendmail-extra-arguments '("--read-envelope-from")
+        message-send-mail-function #'message-send-mail-with-sendmail)
+  (setq +mu4e-gmail-accounts '(("jethrokuan95@gmail.com" . "/jethrokuan95")))
+  ;; don't need to run cleanup after indexing for gmail
+  (setq mu4e-index-cleanup nil
+        ;; because gmail uses labels as folders we can use lazy check since
+        ;; messages don't really "move"
+        mu4e-index-lazy-check t)
+  (defun org-capture-mail ()
+    (interactive)
+    (call-interactively 'org-store-link)
+    (org-capture nil "@"))
+  (map! :map mu4e-headers-mode-map
+        "C-c I" #'org-capture-mail)
+  (map! :map mu4e-view-mode-map
+        "C-c I" #'org-capture-mail))
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -303,8 +330,8 @@
       (cond
        ((org-is-habit-p)
         next-headline)
-       ((jethro/is-project-p)
-        next-headline)
+       ;; ((jethro/is-project-p)
+       ;;  next-headline)
        (t
         nil)))))
 
@@ -313,23 +340,21 @@
                                       ((agenda ""
                                                ((org-agenda-span 'week)
                                                 (org-deadline-warning-days 365)))
-                                       (todo "TODO"
+                                       (alltodo ""
                                              ((org-agenda-overriding-header "Inbox")
-                                              (org-agenda-files '(,(expand-file-name "inbox.org" jethro/org-agenda-directory)))))
-                                       (todo "TODO"
-                                             ((org-agenda-overriding-header "Emails")
-                                              (org-agenda-files '(,(expand-file-name "emails.org" jethro/org-agenda-directory)))))
+                                              (org-agenda-files `(,(expand-file-name "gtd/inbox.org" org-directory)))))
                                        (todo "NEXT"
                                              ((org-agenda-overriding-header "In Progress")
-                                              (org-agenda-files '(,(expand-file-name "projects.org" jethro/org-agenda-directory)))))
+                                              (org-agenda-files `(,(expand-file-name "gtd/projects.org" org-directory)))))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "Active Projects")
-                                              (org-agenda-skip-function #'jethro/skip-projects)
-                                              (org-agenda-files '(,(expand-file-name "projects.org" jethro/org-agenda-directory)))))
+                                              (org-agenda-files `(,(expand-file-name "gtd/projects.org" org-directory)))
+                                              (org-agenda-skip-function #'jethro/skip-projects)))
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "One-off Tasks")
-                                              (org-agenda-files '(,(expand-file-name "next.org" jethro/org-agenda-directory)))
-                                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled)))))))))
+                                              (org-agenda-files `(,(expand-file-name "gtd/next.org" org-directory)))
+                                              ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))
+                                              )))))))
 
 (use-package! org-roam
   :init
@@ -341,17 +366,11 @@
         :desc "org-roam-node-find" "f" #'org-roam-node-find
         :desc "org-roam-ref-find" "r" #'org-roam-ref-find
         :desc "org-roam-show-graph" "g" #'org-roam-show-graph
-        :desc "org-roam-capture" "c" #'org-roam-capture
-        :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today)
+        :desc "org-roam-capture" "c" #'org-roam-capture)
   (setq org-roam-directory (file-truename "~/.org/braindump/org/")
         org-roam-db-gc-threshold most-positive-fixnum
         org-id-link-to-org-use-id t)
   :config
-  (setq org-roam-mode-sections
-        (list #'org-roam-backlinks-insert-section
-              #'org-roam-reflinks-insert-section
-              ;; #'org-roam-unlinked-references-insert-section
-              ))
   (org-roam-setup)
   (set-popup-rules!
     `((,(regexp-quote org-roam-buffer) ; persistent org-roam buffer
@@ -366,41 +385,40 @@
            :if-new (file+head "${slug}.org"
                               "#+title: ${title}\n")
            :immediate-finish t
+           :unnarrowed t)
+          ("r" "bibliography reference" plain "%?"
+           :if-new
+           (file+head "references/${citekey}.org" "#+title: ${title}\n")
            :unnarrowed t)))
-  (setq org-roam-capture-ref-templates
-        '(("r" "ref" plain
-           "%?"
-           :if-new (file+head "${slug}.org"
-                              "#+title: ${title}\n")
-           :unnarrowed t)))
+  (set-company-backend! 'org-mode '(company-capf))
+  (require 'org-roam-protocol))
 
-  (add-to-list 'org-capture-templates `("c" "org-protocol-capture" entry (file+olp ,(expand-file-name "reading_and_writing_inbox.org" org-roam-directory) "The List")
-                                         "* TO-READ [[%:link][%:description]] %^g"
-                                         :immediate-finish t))
-  (add-to-list 'org-agenda-custom-commands `("r" "Reading"
-                                             ((todo "WRITING"
-                                                    ((org-agenda-overriding-header "Writing")
-                                                     (org-agenda-files '(,(expand-file-name "reading_and_writing_inbox.org" org-roam-directory)))))
-                                              (todo "READING"
-                                                    ((org-agenda-overriding-header "Reading")
-                                                     (org-agenda-files '(,(expand-file-name "reading_and_writing_inbox.org" org-roam-directory)))))
-                                              (todo "TO-READ"
-                                                    ((org-agenda-overriding-header "To Read")
-                                                     (org-agenda-files '(,(expand-file-name "reading_and_writing_inbox.org" org-roam-directory))))))))
+(use-package! org-roam-dailies
+  :init
+  (map! :leader
+        :prefix "n"
+        :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today)
+  :config
   (setq org-roam-dailies-directory "daily/")
   (setq org-roam-dailies-capture-templates
         '(("d" "default" entry
            "* %?"
            :if-new (file+head "%<%Y-%m-%d>.org"
-                              "#+title: %<%Y-%m-%d>\n"))))
-  (set-company-backend! 'org-mode '(company-capf)))
+                              "#+title: %<%Y-%m-%d>\n")))))
+
+(use-package! org-roam-bibtex
+  :after org-roam
+  :config
+  (require 'org-ref))
 
 (use-package! websocket
     :after org-roam)
 
 (use-package! org-roam-ui
     :after org-roam
-    :commands (org-roam-ui-mode))
+    :commands (org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-port 35900))
 
 
 (after! org-ref
@@ -428,7 +446,7 @@
   :init
   (map! "C-x m" #'mathpix-screenshot)
   :config
-  (setq mathpix-screenshot-method "flameshot gui -p %s"
+  (setq mathpix-screenshot-method "xfce4-screenshooter -r -o cat > %s"
         mathpix-app-id (with-temp-buffer (insert-file-contents "./secrets/mathpix-app-id") (buffer-string))
         mathpix-app-key (with-temp-buffer (insert-file-contents "./secrets/mathpix-app-key") (buffer-string))))
 
@@ -577,3 +595,9 @@ With a prefix ARG always prompt for command to use."
     (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
         (org-show-properties)
       (org-hide-properties))))
+
+(use-package! tree-sitter
+  :hook
+  (prog-mode . global-tree-sitter-mode)
+  :config
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))

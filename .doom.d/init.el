@@ -55,5 +55,8 @@
        web
        (javascript +lsp)
 
+       :email
+       (mu4e +gmail)
+
        :config
        (default +bindings +smartparens))
