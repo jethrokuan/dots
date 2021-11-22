@@ -14,7 +14,15 @@
 
       company-idle-delay nil
       lsp-ui-sideline-enable nil
-      lsp-enable-symbol-highlighting nil)
+      lsp-enable-symbol-highlighting nil
+      search-highlight t
+      search-whitespace-regexp ".*?"
+      org-directory "~/.org/"
+      org-ellipsis " ▼ "
+      org-adapt-indentation nil
+      org-habit-show-habits-only-for-today t)
+
+(setq jethro/default-bibliography `(,(expand-file-name "braindump/org/biblio.bib" org-directory)))
 
 (use-package modus-themes
   :ensure
@@ -39,14 +47,6 @@
   :config
   (modus-themes-load-operandi)
   :bind ("<f5>" . modus-themes-toggle))
-
-(setq org-directory "~/.org/"
-      org-ellipsis " ▼ "
-      org-adapt-indentation nil
-      org-habit-show-habits-only-for-today t)
-
-(setq search-highlight t
-      search-whitespace-regexp ".*?")
 
 (use-package! ctrlf
   :hook
@@ -422,7 +422,7 @@
 
 
 (after! org-ref
-  (setq org-ref-default-bibliography `,(list (concat org-directory "braindump/org/biblio.bib"))))
+  (setq org-ref-default-bibliography jethro/default-bibliography)))
 
 (use-package! org-roam-protocol
   :after org-protocol)
@@ -461,7 +461,7 @@
 (use-package! bibtex-completion
   :config
   (setq bibtex-completion-notes-path "~/.org/braindump/org/"
-        bibtex-completion-bibliography "~/.org/braindump/org/biblio.bib"
+        bibtex-completion-bibliography jethro/default-bibliography
         bibtex-completion-pdf-field "file"
         bibtex-completion-notes-template-multiple-files
          (concat
@@ -479,6 +479,14 @@
           ":URL: ${url}\n"
           ":END:\n\n"
           )))
+
+(use-package! citar
+  :bind (("C-c b" . citar-insert-citation)
+         :map minibuffer-local-map
+         ("M-b" . citar-insert-preset))
+  :config
+  (setq citar-bibliography jethro/default-bibliography
+        citar-at-point-function 'embark-act))
 
 (use-package! nov
   :hook (nov-mode . variable-pitch-mode)
@@ -601,3 +609,6 @@ With a prefix ARG always prompt for command to use."
   (prog-mode . global-tree-sitter-mode)
   :config
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(after! consult
+  (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple))
