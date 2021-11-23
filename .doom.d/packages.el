@@ -30,3 +30,4 @@
 (package! org-roam-bibtex)
 (package! tree-sitter)
 (package! tree-sitter-langs)
+(package! citar)
