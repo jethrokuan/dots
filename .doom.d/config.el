@@ -422,7 +422,7 @@
 
 
 (after! org-ref
-  (setq org-ref-default-bibliography jethro/default-bibliography)))
+  (setq org-ref-default-bibliography jethro/default-bibliography))
 
 (use-package! org-roam-protocol
   :after org-protocol)
