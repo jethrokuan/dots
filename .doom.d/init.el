@@ -32,6 +32,7 @@
        spell
 
        :tools
+       biblio
        gist
        (debugger +lsp)
        direnv

@@ -407,9 +407,7 @@
                               "#+title: %<%Y-%m-%d>\n")))))
 
 (use-package! org-roam-bibtex
-  :after org-roam
-  :config
-  (require 'org-ref))
+  :after org-roam)
 
 (use-package! websocket
     :after org-roam)
@@ -419,10 +417,6 @@
     :commands (org-roam-ui-mode)
     :config
     (setq org-roam-ui-port 35900))
-
-
-(after! org-ref
-  (setq org-ref-default-bibliography jethro/default-bibliography))
 
 (use-package! org-roam-protocol
   :after org-protocol)
@@ -435,11 +429,6 @@
 
 (use-package! ox-hugo
   :after org)
-
-(use-package! citeproc-org
-  :after org
-  :config
-  (citeproc-org-setup))
 
 (use-package! mathpix.el
   :commands (mathpix-screenshot)
@@ -458,35 +447,22 @@
 (use-package! outshine
   :commands (outshine-mode))
 
-(use-package! bibtex-completion
-  :config
-  (setq bibtex-completion-notes-path "~/.org/braindump/org/"
-        bibtex-completion-bibliography jethro/default-bibliography
-        bibtex-completion-pdf-field "file"
-        bibtex-completion-notes-template-multiple-files
-         (concat
-          "#+title: ${title}\n"
-          "#+roam_key: cite:${=key=}\n"
-          "* TODO Notes\n"
-          ":PROPERTIES:\n"
-          ":Custom_ID: ${=key=}\n"
-          ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-          ":AUTHOR: ${author-abbrev}\n"
-          ":JOURNAL: ${journaltitle}\n"
-          ":DATE: ${date}\n"
-          ":YEAR: ${year}\n"
-          ":DOI: ${doi}\n"
-          ":URL: ${url}\n"
-          ":END:\n\n"
-          )))
+(after! bibtex-completion
+  (setq! bibtex-completion-notes-path org-roam-directory
+         bibtex-completion-bibliography jethro/default-bibliography
+         org-cite-global-bibliography jethro/default-bibliography
+         bibtex-completion-pdf-field "file"))
 
-(use-package! citar
-  :bind (("C-c b" . citar-insert-citation)
-         :map minibuffer-local-map
-         ("M-b" . citar-insert-preset))
-  :config
+(after! bibtex-completion
+  (after! org-roam
+    (setq! bibtex-completion-notes-path org-roam-directory)))
+
+(after! citar
+  (map! :map org-mode-map
+        :desc "Insert citation" "C-c b" #'citar-insert-citation)
   (setq citar-bibliography jethro/default-bibliography
-        citar-at-point-function 'embark-act))
+        citar-at-point-function 'embark-act
+        citar-org-note-include '(org-id org-roam-ref)))
 
 (use-package! nov
   :hook (nov-mode . variable-pitch-mode)
@@ -532,77 +508,6 @@ With a prefix ARG always prompt for command to use."
  [backtab] #'+fold/toggle
  [C-tab] #'+fold/open-all
  [C-iso-lefttab] #'+fold/close-all)
-
-(use-package! org-present
-  :after org
-  :bind (:map org-present-mode-keymap
-         ("C-c C-j" . jethro/org-present-next)
-         ("C-c C-k" . jethro/org-present-prev)
-         ("n" . jethro/org-present-next)
-         ("p" . jethro/org-present-prev)
-         ("q" . org-present-quit)
-         :map org-mode-map
-         ("<f10>" . org-present))
-  :hook ((org-present-mode . jethro/org-present-hook)
-         (org-present-mode-quit . jethro/org-present-quit-hook))
-  :config
-  (defun jethro/org-present-prepare-slide ()
-    (org-overview)
-    (org-show-entry)
-    (org-show-children))
-
-  (defun jethro/org-present-hook ()
-    (setq header-line-format " ")
-    (doom/increase-font-size 2)
-    (org-present-read-only)
-    (org-latex-preview '(16))
-    (hide-mode-line-mode +1)
-    (org-display-inline-images)
-    (jethro/org-hide-properties)
-    (jethro/org-present-prepare-slide))
-
-  (defun jethro/org-present-quit-hook ()
-    (setq-local face-remapping-alist '((default variable-pitch default)))
-    (doom/reset-font-size)
-    (setq header-line-format nil)
-    (org-present-small)
-    (org-present-read-write)
-    (jethro/org-show-properties))
-
-  (defun jethro/org-present-prev ()
-    (interactive)
-    (org-present-prev)
-    (jethro/org-present-prepare-slide))
-
-  (defun jethro/org-present-next ()
-    (interactive)
-    (org-present-next)
-    (jethro/org-present-prepare-slide))
-
-  (defun jethro/org-hide-properties ()
-    "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
-    (interactive)
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward
-              "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
-        (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
-          (overlay-put ov_this 'display "")
-          (overlay-put ov_this 'hidden-prop-drawer t))))
-    (put 'org-toggle-properties-hide-state 'state 'hidden))
-
-  (defun jethro/org-show-properties ()
-    "Show all org-mode property drawers hidden by org-hide-properties."
-    (interactive)
-    (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
-    (put 'org-toggle-properties-hide-state 'state 'shown))
-
-  (defun jethro/org-toggle-properties ()
-    "Toggle visibility of property drawers."
-    (interactive)
-    (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
-        (org-show-properties)
-      (org-hide-properties))))
 
 (use-package! tree-sitter
   :hook
