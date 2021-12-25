@@ -386,15 +386,18 @@
            :unnarrowed t)
           ("r" "reference" plain "%?"
            :if-new
-           (file+head "reference/${citekey}.org" "#+title: ${title}\n")
+           (file+head "reference/${title}.org" "#+title: ${title}\n")
+           :immediate-finish t
            :unnarrowed t)))
   (set-company-backend! 'org-mode '(company-capf))
   (cl-defmethod org-roam-node-type ((node org-roam-node))
     "Return the TYPE of NODE."
-    (file-name-directory
-     (file-relative-name (org-roam-node-file node) org-roam-directory)))
+    (file-name-nondirectory
+     (directory-file-name
+      (file-name-directory
+       (file-relative-name (org-roam-node-file node) org-roam-directory)))))
   (setq org-roam-node-display-template
-        (concat "${type:20} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+        (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (require 'org-roam-protocol))
 
 (use-package! org-roam-dailies
