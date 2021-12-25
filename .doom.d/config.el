@@ -358,7 +358,6 @@
 
 (use-package! org-roam
   :init
-  (setq org-roam-v2-ack t)
   (map! :leader
         :prefix "n"
         :desc "org-roam" "l" #'org-roam-buffer-toggle
@@ -377,7 +376,6 @@
        :side right :width .33 :height .5 :ttl nil :modeline nil :quit nil :slot 1)
       ("^\\*org-roam: " ; node dedicated org-roam buffer
        :side right :width .33 :height .5 :ttl nil :modeline nil :quit nil :slot 2)))
-
   (add-hook 'org-roam-mode-hook #'turn-on-visual-line-mode)
   (setq org-roam-capture-templates
         '(("d" "default" plain
@@ -386,11 +384,17 @@
                               "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)
-          ("r" "bibliography reference" plain "%?"
+          ("r" "reference" plain "%?"
            :if-new
-           (file+head "references/${citekey}.org" "#+title: ${title}\n")
+           (file+head "reference/${citekey}.org" "#+title: ${title}\n")
            :unnarrowed t)))
   (set-company-backend! 'org-mode '(company-capf))
+  (cl-defmethod org-roam-node-type ((node org-roam-node))
+    "Return the TYPE of NODE."
+    (file-name-directory
+     (file-relative-name (org-roam-node-file node) org-roam-directory)))
+  (setq org-roam-node-display-template
+        (concat "${type:20} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (require 'org-roam-protocol))
 
 (use-package! org-roam-dailies
@@ -405,18 +409,6 @@
            "* %?"
            :if-new (file+head "%<%Y-%m-%d>.org"
                               "#+title: %<%Y-%m-%d>\n")))))
-
-(use-package! org-roam-bibtex
-  :after org-roam)
-
-(use-package! websocket
-    :after org-roam)
-
-(use-package! org-roam-ui
-    :after org-roam
-    :commands (org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-port 35900))
 
 (use-package! org-roam-protocol
   :after org-protocol)
@@ -462,7 +454,12 @@
         :desc "Insert citation" "C-c b" #'citar-insert-citation)
   (setq citar-bibliography jethro/default-bibliography
         citar-at-point-function 'embark-act
-        citar-org-note-include '(org-id org-roam-ref)))
+        citar-symbol-separator "  "
+        citar-format-reference-function 'citar-citeproc-format-reference
+        org-cite-csl-styles-dir "~/Zotero/styles"
+        citar-citeproc-csl-styles-dir org-cite-csl-styles-dir
+        citar-citeproc-csl-locales-dir "~/Zotero/locales"
+        citar-citeproc-csl-style (file-name-concat org-cite-csl-styles-dir "apa.csl")))
 
 (use-package! nov
   :hook (nov-mode . variable-pitch-mode)
@@ -473,8 +470,6 @@
 
 (use-package! yaml-mode
   :mode ("\\.yml\\'" . yaml-mode))
-
-;; (use-package! org-roam-server)
 
 (use-package! emmet-mode
   :hook
@@ -514,6 +509,3 @@ With a prefix ARG always prompt for command to use."
   (prog-mode . global-tree-sitter-mode)
   :config
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-
-(after! consult
-  (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple))

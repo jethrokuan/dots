@@ -7,8 +7,6 @@
 (package! company-posframe)
 (package! org-roam
   :recipe (:host github :repo "org-roam/org-roam"))
-;; (package! org-roam-bibtex
-;;   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 (package! modus-themes)
@@ -22,7 +20,7 @@
 (package! yaml-mode)
 (package! emmet-mode)
 (package! dash)
-(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
 (package! org-roam-bibtex)
 (package! tree-sitter)
 (package! tree-sitter-langs)
+(package! emacsql-sqlite3)
