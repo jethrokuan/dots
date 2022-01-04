@@ -59,7 +59,7 @@
     zotero
 
     # Media
-    vlc
+    # vlc
 
     # Screencasting
     simplescreenrecorder
@@ -73,6 +73,12 @@
     texlive.combined.scheme-full
     zotero
 
+    # fonts
+    iosevka
+
+    roboto-mono
+    libre-baskerville
+
     (makeDesktopItem {
       name = "org-protocol";
       exec = "emacsclient %u";
@@ -82,6 +88,8 @@
       mimeType = "x-scheme-handler/org-protocol";
     })
   ];
+
+  fonts.fontconfig.enable = true;
 
   programs.firefox.enable = true;
   programs.direnv.enable = true;
@@ -110,6 +118,7 @@
     enable = true;
     shellAliases = {
       "p2x1" = "pdfnup --nup 2x1 --landscape --suffix '2x1' --batch ";
+      "config"= "git --git-dir=$HOME/.dots --work-tree=$HOME ";
     };
   };
   
