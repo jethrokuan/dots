@@ -389,13 +389,17 @@
            (file+head "reference/${title}.org" "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)))
+  (add-hook 'org-roam-capture-new-node-hook (lambda ()
+                                              (org-roam-tag-add '("draft"))))
   (set-company-backend! 'org-mode '(company-capf))
   (cl-defmethod org-roam-node-type ((node org-roam-node))
     "Return the TYPE of NODE."
-    (file-name-nondirectory
-     (directory-file-name
-      (file-name-directory
-       (file-relative-name (org-roam-node-file node) org-roam-directory)))))
+    (condition-case nil
+        (file-name-nondirectory
+         (directory-file-name
+          (file-name-directory
+           (file-relative-name (org-roam-node-file node) org-roam-directory))))
+      (error "")))
   (setq org-roam-node-display-template
         (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (require 'org-roam-protocol))
@@ -507,8 +511,8 @@ With a prefix ARG always prompt for command to use."
  [C-tab] #'+fold/open-all
  [C-iso-lefttab] #'+fold/close-all)
 
-(use-package! tree-sitter
-  :hook
-  (prog-mode . global-tree-sitter-mode)
-  :config
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+;; (use-package! tree-sitter
+;;   :hook
+;;   (prog-mode . global-tree-sitter-mode)
+;;   :config
+;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
