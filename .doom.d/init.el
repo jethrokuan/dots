@@ -40,7 +40,7 @@
        (lookup +docsets +dictionary)
        (lsp +peek)
        (magit +forge)
-       upload
+       ;; upload
 
        :lang
        data
@@ -48,16 +48,16 @@
        (latex +latexmk)
        markdown
        nix
-       (org +noter +dnd +present)
+       (org +dnd)
        (python +lsp +pyright)
        rest
-       (rust +lsp)
+       ;; (rust +lsp)
        sh
        web
        (javascript +lsp)
 
        :email
-       (mu4e +gmail)
+       ;; (mu4e +gmail)
 
        :config
        (default +bindings +smartparens))

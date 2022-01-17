@@ -132,48 +132,38 @@
   "Archive all done tasks."
   (interactive)
   (org-map-entries 'org-archive-subtree "/DONE" 'file))
-(require 'find-lisp)
 
-(setq jethro/org-agenda-directory (file-truename "~/.org/gtd/"))
+(require 'find-lisp)
+(setq jethro/org-agenda-directory
+      (expand-file-name "gtd/" org-directory))
 (setq org-agenda-files
       (find-lisp-find-files jethro/org-agenda-directory "\.org$"))
 
 (setq org-capture-templates
       `(("i" "Inbox" entry  (file "gtd/inbox.org")
         ,(concat "* TODO %?\n"
-                 "/Entered on/ %U"))
-        ("c" "Org-protocol capture" entry  (file "gtd/inbox.org")
-        ,(concat "* TODO %a\n"
-                 "/Entered on/ %U")
-        :immediate-finish t)
-        ("@" "Inbox [mu4e]" entry (file "gtd/inbox.org")
-        ,(concat "* TODO Reply to \"%a\" %?\n"
                  "/Entered on/ %U"))))
 
-(after! mu4e
-  (setq sendmail-program (executable-find "msmtp")
-        send-mail-function #'smtpmail-send-it
-        message-sendmail-f-is-evil t
-        message-sendmail-extra-arguments '("--read-envelope-from")
-        message-send-mail-function #'message-send-mail-with-sendmail)
-  (setq +mu4e-gmail-accounts '(("jethrokuan95@gmail.com" . "/jethrokuan95")))
-  ;; don't need to run cleanup after indexing for gmail
-  (setq mu4e-index-cleanup nil
-        ;; because gmail uses labels as folders we can use lazy check since
-        ;; messages don't really "move"
-        mu4e-index-lazy-check t)
-  (defun org-capture-mail ()
-    (interactive)
-    (call-interactively 'org-store-link)
-    (org-capture nil "@"))
-  (map! :map mu4e-headers-mode-map
-        "C-c I" #'org-capture-mail)
-  (map! :map mu4e-view-mode-map
-        "C-c I" #'org-capture-mail))
+(defun jethro/org-capture-inbox ()
+  (interactive)
+  (org-capture nil "i"))
+
+(defun jethro/org-agenda ()
+  (interactive)
+  (org-agenda nil " "))
+
+(bind-key "C-c <tab>" #'jethro/org-capture-inbox)
+(bind-key "C-c SPC" #'jethro/org-agenda)
 
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-        (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
+      '((sequence "TODO(t)" "NEXT(n)" "HOLD(h)" "|" "DONE(d)")))
+
+(defun log-todo-next-creation-date (&rest ignore)
+  "Log NEXT creation time in the property drawer under the key 'ACTIVATED'"
+  (when (and (string= (org-get-todo-state) "NEXT")
+             (not (org-entry-get nil "ACTIVATED")))
+    (org-entry-put nil "ACTIVATED" (format-time-string "[%Y-%m-%d]"))))
+(add-hook 'org-after-todo-state-change-hook #'log-todo-next-creation-date)
 
 (setq org-log-done 'time
       org-log-into-drawer t
@@ -181,24 +171,13 @@
 
 (setq org-tag-alist '(("@errand" . ?e)
                       ("@office" . ?o)
-                      ("@home" . ?h)
-                      (:newline)
-                      ("CANCELLED" . ?c)))
-
-(setq org-agenda-prefix-format
-      '((agenda . " %i %-12:c%?-12t% s")
-        (todo   . " ")
-        (tags   . " %i %-12:c")
-        (search . " %i %-12:c")))
+                      ("@home" . ?h)))
 
 (setq org-fast-tag-selection-single-key nil)
 (setq org-refile-use-outline-path 'file
       org-outline-path-complete-in-steps nil)
 (setq org-refile-allow-creating-parent-nodes 'confirm
-      org-refile-targets '((org-agenda-files . (:level . 1))))
-
-(defvar jethro/org-agenda-bulk-process-key ?f
-  "Default key for bulk processing inbox items.")
+      org-refile-targets '(("projects.org" . (:level . 1))))
 
 (defun jethro/org-process-inbox ()
   "Called in org-agenda-mode, processes all inbox items."
@@ -272,8 +251,6 @@
   "Capture a task in agenda mode."
   (org-capture nil "i"))
 
-(setq org-agenda-bulk-custom-functions `((,jethro/org-agenda-bulk-process-key jethro/org-agenda-process-inbox-item)))
-
 (map! :map org-agenda-mode-map
       "i" #'org-agenda-clock-in
       "I" #'jethro/clock-in-and-advance
@@ -323,15 +300,13 @@
       (and is-a-task has-subtask))))
 
   (defun jethro/skip-projects ()
-  "Skip trees that are projects"
+  "Skip trees that are projects."
   (save-restriction
     (widen)
     (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
       (cond
        ((org-is-habit-p)
         next-headline)
-       ;; ((jethro/is-project-p)
-       ;;  next-headline)
        (t
         nil)))))
 
@@ -349,12 +324,7 @@
                                        (todo "TODO"
                                              ((org-agenda-overriding-header "Active Projects")
                                               (org-agenda-files `(,(expand-file-name "gtd/projects.org" org-directory)))
-                                              (org-agenda-skip-function #'jethro/skip-projects)))
-                                       (todo "TODO"
-                                             ((org-agenda-overriding-header "One-off Tasks")
-                                              (org-agenda-files `(,(expand-file-name "gtd/next.org" org-directory)))
-                                              ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))
-                                              )))))))
+                                              (org-agenda-skip-function #'jethro/skip-projects))))))))
 
 (use-package! org-roam
   :init
