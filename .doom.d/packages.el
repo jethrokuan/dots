@@ -24,3 +24,6 @@
 (package! tree-sitter)
 (package! tree-sitter-langs)
 (package! emacsql-sqlite3)
+(package! thrift)
+(package! abnormal
+  :recipe (:local-repo "~/projects/abnorm.el"))

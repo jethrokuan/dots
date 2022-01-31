@@ -142,11 +142,17 @@
 (setq org-capture-templates
       `(("i" "Inbox" entry  (file "gtd/inbox.org")
         ,(concat "* TODO %?\n"
-                 "/Entered on/ %U"))))
+                 "/Entered on/ %U"))
+        ("s" "Slipbox" entry  (file "braindump/org/inbox.org")
+         "* %?\n")))
 
 (defun jethro/org-capture-inbox ()
   (interactive)
   (org-capture nil "i"))
+
+(defun jethro/org-capture-slipbox ()
+  (interactive)
+  (org-capture nil "s"))
 
 (defun jethro/org-agenda ()
   (interactive)
@@ -335,12 +341,13 @@
         :desc "org-roam-node-find" "f" #'org-roam-node-find
         :desc "org-roam-ref-find" "r" #'org-roam-ref-find
         :desc "org-roam-show-graph" "g" #'org-roam-show-graph
+        :desc "jethro/org-capture-slipbox" "<tab>" #'jethro/org-capture-slipbox
         :desc "org-roam-capture" "c" #'org-roam-capture)
   (setq org-roam-directory (file-truename "~/.org/braindump/org/")
         org-roam-db-gc-threshold most-positive-fixnum
         org-id-link-to-org-use-id t)
   :config
-  (org-roam-setup)
+  (org-roam-db-autosync-mode +1)
   (set-popup-rules!
     `((,(regexp-quote org-roam-buffer) ; persistent org-roam buffer
        :side right :width .33 :height .5 :ttl nil :modeline nil :quit nil :slot 1)
@@ -348,9 +355,9 @@
        :side right :width .33 :height .5 :ttl nil :modeline nil :quit nil :slot 2)))
   (add-hook 'org-roam-mode-hook #'turn-on-visual-line-mode)
   (setq org-roam-capture-templates
-        '(("d" "default" plain
+        '(("m" "main" plain
            "%?"
-           :if-new (file+head "${slug}.org"
+           :if-new (file+head "main/${slug}.org"
                               "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)
@@ -358,9 +365,15 @@
            :if-new
            (file+head "reference/${title}.org" "#+title: ${title}\n")
            :immediate-finish t
+           :unnarrowed t)
+          ("a" "article" plain "%?"
+           :if-new
+           (file+head "articles/${title}.org" "#+title: ${title}\n#+filetags: :article:\n")
+           :immediate-finish t
            :unnarrowed t)))
-  (add-hook 'org-roam-capture-new-node-hook (lambda ()
-                                              (org-roam-tag-add '("draft"))))
+  (defun jethro/tag-new-node-as-draft ()
+    (org-roam-tag-add '("draft")))
+  (add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
   (set-company-backend! 'org-mode '(company-capf))
   (cl-defmethod org-roam-node-type ((node org-roam-node))
     "Return the TYPE of NODE."
@@ -372,23 +385,24 @@
       (error "")))
   (setq org-roam-node-display-template
         (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-  (require 'org-roam-protocol))
+  (defun jethro/org-roam-node-from-cite (keys-entries)
+    (interactive (list (citar-select-ref :multiple nil :rebuild-cache t)))
+    (let ((title (citar--format-entry-no-widths (cdr keys-entries)
+                                                "${author editor} :: ${title}")))
+      (org-roam-capture- :templates
+                         '(("r" "reference" plain "%?" :if-new
+                            (file+head "reference/${citekey}.org"
+                                       ":PROPERTIES:
+:ROAM_REFS: [cite:@${citekey}]
+:END:
+#+title: ${title}\n")
+                            :immediate-finish t
+                            :unnarrowed t))
+                         :info (list :citekey (car keys-entries))
+                         :node (org-roam-node-create :title title)
+                         :props '(:finalize find-file)))))
 
-(use-package! org-roam-dailies
-  :init
-  (map! :leader
-        :prefix "n"
-        :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today)
-  :config
-  (setq org-roam-dailies-directory "daily/")
-  (setq org-roam-dailies-capture-templates
-        '(("d" "default" entry
-           "* %?"
-           :if-new (file+head "%<%Y-%m-%d>.org"
-                              "#+title: %<%Y-%m-%d>\n")))))
-
-(use-package! org-roam-protocol
-  :after org-protocol)
+(use-package! thrift)
 
 (after! company
   (map! "M-/" #'company-complete))
@@ -480,6 +494,10 @@ With a prefix ARG always prompt for command to use."
  [backtab] #'+fold/toggle
  [C-tab] #'+fold/open-all
  [C-iso-lefttab] #'+fold/close-all)
+
+(use-package! abnormal
+  :config
+  (abnormal-mode))
 
 ;; (use-package! tree-sitter
 ;;   :hook
