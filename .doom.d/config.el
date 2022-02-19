@@ -22,6 +22,17 @@
       org-adapt-indentation nil
       org-habit-show-habits-only-for-today t)
 
+(autoload 'ffap-guesser "ffap")
+(setq minibuffer-default-add-function
+      (defun minibuffer-default-add-function+ ()
+        (with-selected-window (minibuffer-selected-window)
+          (delete-dups
+           (delq nil
+                 (list (thing-at-point 'symbol)
+                       (thing-at-point 'list)
+                       (ffap-guesser)
+                       (thing-at-point-url-at-point)))))))
+
 (setq jethro/default-bibliography `(,(expand-file-name "braindump/org/biblio.bib" org-directory)))
 
 (use-package modus-themes
@@ -53,18 +64,18 @@
   (after-init . ctrlf-mode))
 
 (use-package! dired-narrow
-    :commands (dired-narrow-fuzzy)
-    :init
-    (map! :map dired-mode-map
-          :desc "narrow" "/" #'dired-narrow-fuzzy))
+  :commands (dired-narrow-fuzzy)
+  :init
+  (map! :map dired-mode-map
+        :desc "narrow" "/" #'dired-narrow-fuzzy))
 
 (map! "C-c h s" #'+vc/smerge-hydra/body)
 
 (use-package! git-link
-    :commands
-    (git-link git-link-commit git-link-homepage)
-    :custom
-    (git-link-use-commit t))
+  :commands
+  (git-link git-link-commit git-link-homepage)
+  :custom
+  (git-link-use-commit t))
 
 (map! "s-g" #'magit-status
       "C-c g" #'magit-status
@@ -141,8 +152,8 @@
 
 (setq org-capture-templates
       `(("i" "Inbox" entry  (file "gtd/inbox.org")
-        ,(concat "* TODO %?\n"
-                 "/Entered on/ %U"))
+         ,(concat "* TODO %?\n"
+                  "/Entered on/ %U"))
         ("s" "Slipbox" entry  (file "braindump/org/inbox.org")
          "* %?\n")))
 
@@ -225,6 +236,7 @@
    (org-agenda-refile nil nil t)))
 
 (defun jethro/bulk-process-entries ()
+  (let ())
   (if (not (null org-agenda-bulk-marked-entries))
       (let ((entries (reverse org-agenda-bulk-marked-entries))
             (processed 0)
@@ -275,10 +287,10 @@
 
 (use-package! org-clock-convenience
   :bind (:map org-agenda-mode-map
-              ("<S-up>" . org-clock-convenience-timestamp-up)
-              ("<S-down>" . org-clock-convenience-timestamp-down)
-              ("o" . org-clock-convenience-fill-gap)
-              ("e" . org-clock-convenience-fill-gap-both)))
+         ("<S-up>" . org-clock-convenience-timestamp-up)
+         ("<S-down>" . org-clock-convenience-timestamp-down)
+         ("o" . org-clock-convenience-fill-gap)
+         ("e" . org-clock-convenience-fill-gap-both)))
 
 (use-package! org-agenda
   :init
@@ -290,40 +302,40 @@
     (org-agenda nil " "))
   :config
   (defun jethro/is-project-p ()
-  "Any task with a todo keyword subtask"
-  (save-restriction
-    (widen)
-    (let ((has-subtask)
-          (subtree-end (save-excursion (org-end-of-subtree t)))
-          (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
-      (save-excursion
-        (forward-line 1)
-        (while (and (not has-subtask)
-                    (< (point) subtree-end)
-                    (re-search-forward "^\*+ " subtree-end t))
-          (when (member (org-get-todo-state) org-todo-keywords-1)
-            (setq has-subtask t))))
-      (and is-a-task has-subtask))))
+    "Any task with a todo keyword subtask"
+    (save-restriction
+      (widen)
+      (let ((has-subtask)
+            (subtree-end (save-excursion (org-end-of-subtree t)))
+            (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+        (save-excursion
+          (forward-line 1)
+          (while (and (not has-subtask)
+                      (< (point) subtree-end)
+                      (re-search-forward "^\*+ " subtree-end t))
+            (when (member (org-get-todo-state) org-todo-keywords-1)
+              (setq has-subtask t))))
+        (and is-a-task has-subtask))))
 
   (defun jethro/skip-projects ()
-  "Skip trees that are projects."
-  (save-restriction
-    (widen)
-    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-      (cond
-       ((org-is-habit-p)
-        next-headline)
-       (t
-        nil)))))
+    "Skip trees that are projects."
+    (save-restriction
+      (widen)
+      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+        (cond
+         ((org-is-habit-p)
+          next-headline)
+         (t
+          nil)))))
 
   (setq org-columns-default-format "%40ITEM(Task) %Effort(EE){:} %CLOCKSUM(Time Spent) %SCHEDULED(Scheduled) %DEADLINE(Deadline)")
   (setq org-agenda-custom-commands `((" " "Agenda"
-                                      ((agenda ""
+                                      ((alltodo ""
+                                                ((org-agenda-overriding-header "Inbox")
+                                                 (org-agenda-files `(,(expand-file-name "gtd/inbox.org" org-directory)))))
+                                       (agenda ""
                                                ((org-agenda-span 'week)
                                                 (org-deadline-warning-days 365)))
-                                       (alltodo ""
-                                             ((org-agenda-overriding-header "Inbox")
-                                              (org-agenda-files `(,(expand-file-name "gtd/inbox.org" org-directory)))))
                                        (todo "NEXT"
                                              ((org-agenda-overriding-header "In Progress")
                                               (org-agenda-files `(,(expand-file-name "gtd/projects.org" org-directory)))))
@@ -363,12 +375,12 @@
            :unnarrowed t)
           ("r" "reference" plain "%?"
            :if-new
-           (file+head "reference/${title}.org" "#+title: ${title}\n")
+           (file+head "reference/${slug}.org" "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)
           ("a" "article" plain "%?"
            :if-new
-           (file+head "articles/${title}.org" "#+title: ${title}\n#+filetags: :article:\n")
+           (file+head "articles/${slug}.org" "#+title: ${title}\n#+filetags: :article:\n")
            :immediate-finish t
            :unnarrowed t)))
   (defun jethro/tag-new-node-as-draft ()
@@ -385,6 +397,7 @@
       (error "")))
   (setq org-roam-node-display-template
         (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (require 'citar)
   (defun jethro/org-roam-node-from-cite (keys-entries)
     (interactive (list (citar-select-ref :multiple nil :rebuild-cache t)))
     (let ((title (citar--format-entry-no-widths (cdr keys-entries)

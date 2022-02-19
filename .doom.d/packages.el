@@ -26,4 +26,4 @@
 (package! emacsql-sqlite3)
 (package! thrift)
 (package! abnormal
-  :recipe (:local-repo "~/projects/abnorm.el"))
+  :recipe (:local-repo "/Users/jethro/projects/abnormal.el"))
