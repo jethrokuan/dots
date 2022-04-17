@@ -1,8 +1,9 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
 (doom! :completion
-       company
-       vertico
+       ;; company
+       (corfu +orderless)
+       (vertico +orderless +icons)
 
        :ui
        hydra
@@ -38,7 +39,7 @@
        direnv
        (eval +overlay)
        (lookup +docsets +dictionary)
-       (lsp +peek)
+       lsp
        (magit +forge)
        ;; upload
 

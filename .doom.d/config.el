@@ -3,16 +3,15 @@
 (setq user-full-name "Jethro Kuan"
       user-mail-address "jethrokuan95@gmail.com"
       doom-scratch-initial-major-mode 'lisp-interaction-mode
-      doom-font (font-spec :family "Iosevka" :size 15)
+      doom-font (font-spec :family "Dank Mono" :size 16)
       doom-variable-pitch-font (font-spec :family "Roboto" :size 16)
       doom-serif-font (font-spec :family "Libre Baskerville")
-      doom-theme 'modus-operandi
+      doom-theme 'doom-one
       display-line-numbers-type nil
       load-prefer-newer t
       +zen-text-scale 1
       writeroom-extra-line-spacing 0.3
 
-      company-idle-delay nil
       lsp-ui-sideline-enable nil
       lsp-enable-symbol-highlighting nil
       search-highlight t
@@ -34,30 +33,6 @@
                        (thing-at-point-url-at-point)))))))
 
 (setq jethro/default-bibliography `(,(expand-file-name "braindump/org/biblio.bib" org-directory)))
-
-(use-package modus-themes
-  :ensure
-  :init
-  ;; Add all your customizations prior to loading the themes
-  (setq modus-themes-italic-constructs t
-        modus-themes-completions 'opinionated
-        modus-themes-variable-pitch-headings t
-        modus-themes-scale-headings t
-        modus-themes-variable-pitch-ui t
-        modus-themes-org-agenda
-        '((header-block . (variable-pitch scale-title))
-          (header-date . (grayscale bold-all)))
-        modus-themes-org-blocks
-        '(grayscale)
-        modus-themes-mode-line
-        '(borderless)
-        modus-themes-region '(bg-only no-extend))
-
-  ;; Load the theme files before enabling a theme
-  (modus-themes-load-themes)
-  :config
-  (modus-themes-load-operandi)
-  :bind ("<f5>" . modus-themes-toggle))
 
 (use-package! ctrlf
   :hook
@@ -356,6 +331,7 @@
         :desc "jethro/org-capture-slipbox" "<tab>" #'jethro/org-capture-slipbox
         :desc "org-roam-capture" "c" #'org-roam-capture)
   (setq org-roam-directory (file-truename "~/.org/braindump/org/")
+        org-roam-database-connector 'sqlite-builtin
         org-roam-db-gc-threshold most-positive-fixnum
         org-id-link-to-org-use-id t)
   :config
@@ -386,7 +362,6 @@
   (defun jethro/tag-new-node-as-draft ()
     (org-roam-tag-add '("draft")))
   (add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
-  (set-company-backend! 'org-mode '(company-capf))
   (cl-defmethod org-roam-node-type ((node org-roam-node))
     "Return the TYPE of NODE."
     (condition-case nil
@@ -417,12 +392,6 @@
 
 (use-package! thrift)
 
-(after! company
-  (map! "M-/" #'company-complete))
-
-(use-package! company-posframe
-  :hook (company-mode . company-posframe-mode))
-
 (use-package! ox-hugo
   :after org)
 
@@ -439,9 +408,6 @@
   "Insert a timestamp according to locale's date and time format."
   (interactive)
   (insert (format-time-string "%c" (current-time))))
-
-(use-package! outshine
-  :commands (outshine-mode))
 
 (after! bibtex-completion
   (setq! bibtex-completion-notes-path org-roam-directory
@@ -512,8 +478,10 @@ With a prefix ARG always prompt for command to use."
   :config
   (abnormal-mode))
 
-;; (use-package! tree-sitter
-;;   :hook
-;;   (prog-mode . global-tree-sitter-mode)
-;;   :config
-;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+(use-package! tree-sitter
+  :hook
+  (prog-mode . global-tree-sitter-mode))
+
+(use-package! sphinx-doc
+  :config
+  (add-hook 'python-mode-hook 'sphinx-doc-mode))
