@@ -14,7 +14,7 @@
        modeline
        nav-flash
        ophints
-       (popup +all +defaults)
+       (popup +defaults)
        vc-gutter
        zen
 
@@ -25,6 +25,7 @@
 
        :emacs
        dired
+       ibuffer
        electric
        vc
 
@@ -48,7 +49,7 @@
        emacs-lisp
        (latex +latexmk)
        markdown
-       nix
+       ;; nix
        (org +dnd)
        (python +lsp +pyright)
        rest
