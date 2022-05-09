@@ -28,3 +28,4 @@
 (package! abnormal
   :recipe (:local-repo "/Users/jethro/projects/abnormal.el"))
 (package! sphinx-doc)
+(package! jq-mode)

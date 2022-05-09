@@ -57,6 +57,7 @@
        sh
        web
        (javascript +lsp)
+       (json +lsp)
 
        :email
        ;; (mu4e +gmail)

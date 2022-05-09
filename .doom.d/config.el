@@ -476,7 +476,9 @@ With a prefix ARG always prompt for command to use."
 
 (use-package! abnormal
   :config
-  (abnormal-mode))
+  (abnormal-mode)
+  :init
+  (map! :desc "Abnormal Dispatch" "C-c b" #'abnormal-dispatch))
 
 (use-package! tree-sitter
   :hook
@@ -485,3 +487,13 @@ With a prefix ARG always prompt for command to use."
 (use-package! sphinx-doc
   :config
   (add-hook 'python-mode-hook 'sphinx-doc-mode))
+
+(after! python
+  (add-hook
+   'python-mode-hook
+   (lambda ()
+     (setq-local python-indent-offset 2))))
+
+(after! json-mode
+  (map! :map json-mode-map
+        "C-c C-j" #'jq-interactively))
