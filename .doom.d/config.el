@@ -148,7 +148,7 @@
 (bind-key "C-c SPC" #'jethro/org-agenda)
 
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "NEXT(n)" "HOLD(h)" "|" "DONE(d)")))
+      '((sequence "TODO(t)" "NEXT(n)" "HOLD(h)" "|" "DONE(d)" "|" "Cancelled(c)")))
 
 (defun log-todo-next-creation-date (&rest ignore)
   "Log NEXT creation time in the property drawer under the key 'ACTIVATED'"
@@ -438,14 +438,6 @@
 (after! org-noter
   org-noter-doc-split-fraction '(0.57 0.43))
 
-(use-package! yaml-mode
-  :mode ("\\.yml\\'" . yaml-mode))
-
-(use-package! emmet-mode
-  :hook
-  ((sgml-mode . emmet-mode)
-   (css-mode . emmet-mode)))
-
 
 (defun jethro/open-with (arg)
   "Open visited file in default external program.
@@ -484,10 +476,6 @@ With a prefix ARG always prompt for command to use."
   :hook
   (prog-mode . global-tree-sitter-mode))
 
-(use-package! sphinx-doc
-  :config
-  (add-hook 'python-mode-hook 'sphinx-doc-mode))
-
 (after! python
   (add-hook
    'python-mode-hook
@@ -497,3 +485,9 @@ With a prefix ARG always prompt for command to use."
 (after! json-mode
   (map! :map json-mode-map
         "C-c C-j" #'jq-interactively))
+
+(use-package! bazel)
+
+(after! go-mode
+  (after! flycheck
+    (setq flycheck-go-build-tags '("dynamic"))))

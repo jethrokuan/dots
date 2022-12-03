@@ -1,8 +1,7 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
 (doom! :completion
-       ;; company
-       (corfu +orderless)
+       company
        (vertico +orderless +icons)
 
        :ui
@@ -58,9 +57,8 @@
        web
        (javascript +lsp)
        (json +lsp)
-
-       :email
-       ;; (mu4e +gmail)
+       (go +lsp +tree-sitter)
+       (yaml +lsp)
 
        :config
        (default +bindings +smartparens))
